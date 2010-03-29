@@ -20,7 +20,7 @@ pyglet.resource.reindex()
 
 from bamboo.actors.samurai import Samurai
 from bamboo.actors.scenery import Torii
-from bamboo.actors.trees import BambooTree
+from bamboo.actors.trees import BambooTree, BackgroundBambooTree
 from bamboo.terrain import Terrain
 from bamboo.level import Level
 from bamboo.scene import Scene
@@ -29,6 +29,10 @@ level = Level(Terrain(width=1280))
 scene = Scene(window, level)
 
 level.spawn(Torii(), x=650)
+
+for i in range(4):
+	level.spawn(BackgroundBambooTree(angle=(random.random() - 0.5) * 0.2), x=random.random() * window.width)
+
 for i in range(3):
 	level.spawn(BambooTree(), x=random.randint(0, 9) * 128 + 64)
 

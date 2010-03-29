@@ -16,7 +16,7 @@ class Terrain(object):
 	resources_loaded = False
 
 	def height_at(self, x):
-		segment = x // self.unit_width
+		segment = int(x // self.unit_width)
 		if segment < 0:
 			return self.heightmap[0]
 		if segment >= (len(self.heightmap) - 1):
