@@ -14,7 +14,7 @@ from pyglet import gl
 
 window = pyglet.window.Window(1280, 800)
 
-pyglet.resource.path = ['resources/sprites', 'resources/textures']
+pyglet.resource.path = ['resources/sprites', 'resources/textures', 'resources/music', 'resources/sounds']
 pyglet.resource.reindex()
 
 GRAVITY = 3
@@ -69,7 +69,11 @@ class Samurai(object):
 		if self.is_on_ground():
 			self.crouching = False
 			self.vy = 30
-			self.y += 5 # leave the ground
+			self.y += 30 # leave the ground
+			self.play_sound('jumping')
+
+	def play_sound(self, name):
+		self.sounds[name].play()
 
 	def play_animation(self, name):
 		k = name + '-' + self.dir
@@ -121,12 +125,15 @@ class Samurai(object):
 		if cls.resources_loaded:
 			return
 		cls.graphics = {}
+		cls.sounds = {}
 
 		cls.load_sprite('standing', anchor_x=30)
 		cls.load_sprite('crouching', anchor_x=30)
 		cls.load_sprite('jumping', anchor_x=50, anchor_y=10)
 		cls.load_sprite('falling', anchor_x=50)
 		
+		cls.sounds['jumping'] = pyglet.resource.media('samurai-jumping.wav', streaming=False)
+
 		running_frames = [pyglet.resource.image('samurai-running%d.png' % (i + 1)) for i in range(6)]
 		for f in running_frames:
 			f.anchor_x = 105
@@ -317,6 +324,9 @@ window.push_handlers(on_key_press=on_key_press)
 
 keys = key.KeyStateHandler()
 window.push_handlers(keys)
+
+music = pyglet.resource.media('shika-no-toone.ogg')
+music.play()
 
 FPS = 30
 pyglet.clock.schedule_interval(update, (1.0/FPS))
