@@ -26,3 +26,5 @@ class Level(object):
 	def update(self):
 		"""Run physics, update everything in the world"""
 		self.ground.update()
+		for a in self.actors:
+			a.update()

@@ -7,11 +7,15 @@ def set_anchor(tex, anchor_x, anchor_y):
 	"""
 	if anchor_x == 'center':
 		tex.anchor_x = tex.width / 2
+	elif anchor_x == 'right':
+		tex.anchor_x = tex.width
 	else:
 		tex.anchor_x = anchor_x
 
 	if anchor_y == 'center':
 		tex.anchor_y = tex.height / 2
+	elif anchor_y == 'top':
+		tex.anchor_y = tex.height
 	else:
 		tex.anchor_y = anchor_y
 
@@ -32,19 +36,25 @@ class ResourceTracker(object):
 	def load_texture(cls, name, resource=None, anchor_x='center', anchor_y=0):
 		if resource is None:
 			resource = cls.__name__.lower() + '-' + name + '.png'
-		im = pyglet.resource.image(resource)
+		im = pyglet.resource.texture(resource)
 		set_anchor(im, anchor_x, anchor_y)
 		cls.textures[name] = im
 		return im
 
 	@classmethod
 	def load_sprite(cls, name, resource=None, anchor_x='center', anchor_y=0):
-		im = cls.load_texture(name, resource, anchor_x, anchor_y)
+		if resource is None:
+			resource = cls.__name__.lower() + '-' + name + '.png'
+		im = pyglet.resource.image(resource)
+		set_anchor(im, anchor_x, anchor_y)
 		cls.graphics[name] = pyglet.sprite.Sprite(im)
 
 	@classmethod
 	def load_directional_sprite(cls, name, resource=None, anchor_x='center', anchor_y=0):
-		im = cls.load_texture(name, resource, anchor_x, anchor_y)
+		if resource is None:
+			resource = cls.__name__.lower() + '-' + name + '.png'
+		im = pyglet.resource.image(resource)
+		set_anchor(im, anchor_x, anchor_y)
 		cls.graphics[name + '-r'] = pyglet.sprite.Sprite(im)
 		cls.graphics[name + '-l'] = pyglet.sprite.Sprite(im.get_transform(flip_x=True))
 
