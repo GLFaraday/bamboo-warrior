@@ -21,6 +21,8 @@ GRAVITY = 3
 GROUND_Y = 60
 
 class Samurai(object):
+	FALL_SPEED = -5		#threshold at which to play falling animation
+
 	def __init__(self, x=60):
 		self.x = x
 		self.y = 0
@@ -30,31 +32,19 @@ class Samurai(object):
 		self.current = None
 		self.load_resources()
 
+		self.crouching = False
+
 	def run_right(self):
 		self.dir = 'r'
-		ovx = self.vx 
 		self.vx = min(15, self.vx + 5)
-		if ovx <= 0 and self.vx > 0:
-			if self.is_on_ground():
-				self.play_animation('running')
-			elif self.vy > 0:
-				self.play_animation('jumping')
-			else:
-				self.play_animation('falling')
+		self.crouching = False
 
 	def run_left(self):
 		self.dir = 'l'
-		ovx = self.vx 
 		self.vx = max(-15, self.vx - 5)
-		if ovx >= 0 and self.vx < 0:
-			if self.is_on_ground():
-				self.play_animation('running')
-			elif self.vy > 0:
-				self.play_animation('jumping')
-			else:
-				self.play_animation('falling')
+		self.crouching = False
 
-	def stop(self):
+	def apply_friction(self):
 		if not self.is_on_ground():
 			return
 
@@ -63,44 +53,58 @@ class Samurai(object):
 		elif self.vx < 0:
 			self.vx = min(0, self.vx + 1)
 
-		if not self.vx:
-			if self.is_on_ground():
-				self.play_animation('standing')
-
 	def crouch(self):
 		if self.is_on_ground():
-			self.stop()
-			self.play_animation('crouching')
+			self.crouching = True
+			self.apply_friction()
+
+	def stop(self):
+		self.crouching = False
+		self.apply_friction()
 
 	def is_on_ground(self):
-		return self.y <= (ground.height_at(self.x) + 3)
+		return self.y <= (ground.height_at(self.x) + 2)
 
 	def jump(self):
 		if self.is_on_ground():
+			self.crouching = False
 			self.vy = 30
-			self.y += 5
-			self.play_animation('jumping')
+			self.y += 5 # leave the ground
 
 	def play_animation(self, name):
-		self.current = self.graphics[name + '-' + self.dir]
+		k = name + '-' + self.dir
+		if self.current == k:
+			return 
+		self.current = k
 
-	def update(self):
-		self.x += self.vx
-		gh = ground.height_at(self.x)
-		if self.y + self.vy - GRAVITY <= gh + 2:
-			self.y = gh
-			self.vy = 0
+	def update_animation(self):
+		if self.crouching:
+			self.play_animation('crouching')
+		elif self.is_on_ground():
 			if self.vx:
 				self.play_animation('running')
 			else:
 				self.play_animation('standing')
 		else:
-			vy0 = self.vy
-			self.vy -= GRAVITY
-			self.y += self.vy
-			FALL_SPEED = -5
-			if self.vy <= FALL_SPEED and vy0 > FALL_SPEED:
+			if self.vy <= self.FALL_SPEED:
 				self.play_animation('falling')
+			else:
+				self.play_animation('jumping')
+
+	def update(self):
+		self.x += self.vx
+		gh = ground.height_at(self.x)
+		if not self.is_on_ground():
+			if self.y + self.vy - GRAVITY <= gh + 2:
+				self.y = gh
+				self.vy = 0
+			else:
+				vy0 = self.vy
+				self.vy -= GRAVITY
+				self.y += self.vy
+		else:
+			self.y = gh
+		self.update_animation()
 
 	resources_loaded = False
 
@@ -133,8 +137,9 @@ class Samurai(object):
 	def draw(self):
 		if not self.current:
 			self.play_animation('standing')
-		self.current.set_position(self.x, self.y)
-		self.current.draw() 
+		sprite = self.graphics[self.current]
+		sprite.set_position(self.x, self.y)
+		sprite.draw() 
 
 
 class Ground(object):
