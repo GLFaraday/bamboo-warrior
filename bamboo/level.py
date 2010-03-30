@@ -5,11 +5,22 @@ class ActorSpawn(object):
 	}
 
 	def __init__(self, name, pos):
+		if name not in self.NAME_MAP:
+			raise ValueError("Unknown object")
 		self.name = name
 		self.pos = pos
 
+	def get_class(self):
+		modpath = self.NAME_MAP[self.name]
+		parts = modpath.split('.')
+		classname = parts[-1]
+		modname = '.'.join(parts[:-1])
+		mod = __import__(modname, {}, {}, [classname], -1)
+		return getattr(mod, classname)
+		
 	def spawn(self, level):
-		pass
+		obj = self.get_class()
+		level.spawn(obj(), self.pos.x, self.pos.y)
 
 
 class Level(object):
@@ -19,6 +30,12 @@ class Level(object):
 		self.ground = ground
 		self.actor_spawns = actor_spawns
 		self.actors = []
+
+	def restart(self):
+		self.actors = []
+		for spawnpoint in self.actor_spawns:
+			spawnpoint.spawn(self)
+			
 
 	def spawn(self, actor, x, y=None):
 		if not actor._resources_loaded:
