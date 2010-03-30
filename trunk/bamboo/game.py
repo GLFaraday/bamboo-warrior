@@ -1,7 +1,24 @@
+import re
+
 import pyglet
 from pyglet.window import key
 
-FPS = 30
+FPS = 60
+
+class GameState(object):
+	def start(self):
+		"""Called when the gamestate is first activated"""
+
+	def draw(self):
+		"""Called once per frame to handle drawing"""
+
+	def update(self, keys):
+		"""Called once per frame to update the logic;
+		keys is a KeyStateHandler that contains the current state of the keyboard"""
+
+	def on_key_press(self, code, modifiers):
+		"""Called when a key is pressed"""
+
 
 class Game(object):
 	def __init__(self, options):
@@ -10,40 +27,83 @@ class Game(object):
 		"""
 		self.init_resources()
 		self.window = self.create_window(options)
+		self.init_events()
+		self.gamestate = GameState()
 
 	def init_resources(self):
 		pyglet.resource.path = ['resources/sprites', 'resources/textures', 'resources/music', 'resources/sounds', 'resources/levels']
 		pyglet.resource.reindex()
 
-	def create_window(self):
-		window = pyglet.window.Window(1280, 800)
+	def create_window(self, options):
+		mo = re.match(r'(\d+)x(\d+)', options.resolution)
+		if mo:
+			width = int(mo.group(1))
+			height = int(mo.group(2))
+		else:
+			width = 1280
+			height = 720
+
+		window = pyglet.window.Window(width, height, fullscreen=options.fullscreen)
+		window.set_caption('Bamboo Warrior')
 		return window
+
+	def on_key_press(self, code, modifiers):
+		if code == key.F12:
+			print "Wrote", scene.save_screenshot()
+			return pyglet.event.EVENT_HANDLED
+		return self.gamestate.on_key_press(code, modifiers)
+
+	def init_events(self):
+		self.keys = key.KeyStateHandler()
+		self.window.push_handlers(on_key_press=self.on_key_press, on_draw=self.draw)
+		self.window.push_handlers(self.keys)
+
+	def set_gamestate(self, gamestate):
+		self.gamestate = gamestate
+		gamestate.start()
 
 	def update(self, x):
 		"""Update the world, or delegate to something that will"""
+		self.gamestate.update(self.keys)
 
 	def draw(self):
 		"""Draw the scene, or delegate to something that will"""
-		
+		self.gamestate.draw()
+	
 	def run(self):
 		pyglet.clock.schedule_interval(self.update, (1.0/FPS))
 		pyglet.clock.set_fps_limit(FPS)
 		pyglet.app.run()
 
 
-class GameState(object):
+class BambooWarriorGameState(GameState):
 	"""Represents the activities of the game at a given point.
 	It should be possible to replace the gamestate to do something different
 	with input or graphics."""
 
-	def __init__(self, game):
-		level = Level(Terrain(width=1280))
-		scene = Scene(window, level)
+	def __init__(self, game, level='level1.svg'):
+		self.game = game
+		self.start_level(level)
 
-		samurai = Samurai()
-		level.spawn(samurai, x=60)
+	def start_level(self, level):
+		from bamboo.levelloader import SVGLevelLoader
+		from bamboo.scene import Scene
+		loader = SVGLevelLoader()
+		self.level = loader.load(level)
+		self.scene = Scene(self.game.window, self.level)
 
-	def update(foo):
+	def start(self):
+		"""Start is called when the gamestate is initialised"""
+		music = pyglet.resource.media('shika-no-toone.ogg')
+		music.play()
+
+		from bamboo.actors.samurai import Samurai
+		self.samurai = Samurai()
+		self.level.spawn(self.samurai, x=60)
+
+	def update(self, keys):
+		samurai = self.samurai
+
 		if keys[key.Z]:
 			samurai.jump()
 
@@ -58,4 +118,7 @@ class GameState(object):
 
 		samurai.update()
 
-		level.update()
+		self.level.update()
+
+	def draw(self):
+		self.scene.draw()
