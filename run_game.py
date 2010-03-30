@@ -43,11 +43,16 @@ level.spawn(samurai, x=60)
 
 
 def update(foo):
-	if keys[key.UP]:
+	if keys[key.Z]:
 		samurai.jump()
 
-	if keys[key.DOWN]:
-		samurai.crouch()
+	if keys[key.UP]:
+		samurai.climb_up()
+	elif keys[key.DOWN]:
+		if samurai.is_climbing():
+			samurai.climb_down()
+		else:
+			samurai.crouch()
 	elif keys[key.RIGHT]:
 		samurai.run_right()
 	elif keys[key.LEFT]:
