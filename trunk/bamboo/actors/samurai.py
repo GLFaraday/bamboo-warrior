@@ -3,7 +3,7 @@ from base import Actor
 GRAVITY = 0.5
 
 class Samurai(Actor):
-	FALL_SPEED = -5		#threshold at which to play falling animation
+	FALL_SPEED = -10		#threshold at which to play falling animation
 
 	def __init__(self):
 		self.dir = 'r'
