@@ -6,6 +6,12 @@ class Vec2(object):
 		self.x = x
 		self.y = y
 
+	def __repr__(self):
+		return 'Vec2(%r, %r)' % tuple(self)
+
+	def __str__(self):
+		return '(%f, %f)' % tuple(self)
+
 	def __add__(self, ano):
 		return Vec2(self.x + ano.x, self.y + ano.y)
 

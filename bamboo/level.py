@@ -1,6 +1,23 @@
+class ActorSpawn(object):
+	NAME_MAP = {
+		'BambooTree': 'bamboo.actors.trees.BambooTree',
+		'Torii': 'bamboo.actors.scenery.Torii',
+	}
+
+	def __init__(self, name, pos):
+		self.name = name
+		self.pos = pos
+
+	def spawn(self, level):
+		pass
+
+
 class Level(object):
-	def __init__(self, ground):
+	def __init__(self, width, height, ground, actor_spawns=[]):
+		self.width = width
+		self.height = height
 		self.ground = ground
+		self.actor_spawns = actor_spawns
 		self.actors = []
 
 	def spawn(self, actor, x, y=None):

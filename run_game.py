@@ -12,32 +12,31 @@ import pyglet
 from pyglet.window import key
 from pyglet import gl
 
-window = pyglet.window.Window(1280, 800)
 
-pyglet.resource.path = ['resources/sprites', 'resources/textures', 'resources/music', 'resources/sounds', 'resources/levels']
-pyglet.resource.reindex()
-
-
-from bamboo.actors.samurai import Samurai
-from bamboo.actors.scenery import Torii
-from bamboo.actors.trees import BambooTree, BackgroundBambooTree
-from bamboo.terrain import Terrain
-from bamboo.level import Level
-from bamboo.scene import Scene
-
-level = Level(Terrain(width=1280))
-scene = Scene(window, level)
-
-level.spawn(Torii(), x=650)
-
-for i in range(4):
-	level.spawn(BackgroundBambooTree(angle=(random.random() - 0.5) * 0.2), x=random.random() * window.width)
-
-for i in range(3):
-	level.spawn(BambooTree(), x=random.randint(0, 9) * 128 + 64)
-
-samurai = Samurai()
-level.spawn(samurai, x=60)
+#pyglet.resource.path = ['resources/sprites', 'resources/textures', 'resources/music', 'resources/sounds', 'resources/levels']
+#pyglet.resource.reindex()
+#
+#
+#from bamboo.actors.samurai import Samurai
+#from bamboo.actors.scenery import Torii
+#from bamboo.actors.trees import BambooTree, BackgroundBambooTree
+#from bamboo.terrain import Terrain
+#from bamboo.level import Level
+#from bamboo.scene import Scene
+#
+#level = Level(Terrain(width=1280))
+#scene = Scene(window, level)
+#
+#level.spawn(Torii(), x=650)
+#
+#for i in range(4):
+#	level.spawn(BackgroundBambooTree(angle=(random.random() - 0.5) * 0.2), x=random.random() * window.width)
+#
+#for i in range(3):
+#	level.spawn(BambooTree(), x=random.randint(0, 9) * 128 + 64)
+#
+#samurai = Samurai()
+#level.spawn(samurai, x=60)
 
 
 
@@ -65,9 +64,9 @@ def update(foo):
 	level.update()
 
 
-@window.event
-def on_draw():
-	scene.draw()
+#@window.event
+#def on_draw():
+#	scene.draw()
 #	draw_background()
 ##	window.clear()
 #	torii.draw()
@@ -76,22 +75,16 @@ def on_draw():
 #		tree.draw()
 #	level.ground.draw()
 
+from optparse import OptionParser
 
-def on_key_press(code, modifiers):
-	if code == key.F12:
-		print "Wrote", scene.save_screenshot()
-		return pyglet.event.EVENT_HANDLED
+parser = OptionParser()
+parser.add_option('-f', '--fullscreen', action='store_true', help='Start fullscreen', default=False)
+parser.add_option('-d', '--resolution', help='Screen or window resolution (WxH)', default='1280x720')
+options, arguments = parser.parse_args()
 
-window.push_handlers(on_key_press=on_key_press)
+from bamboo.game import Game, BambooWarriorGameState
 
-keys = key.KeyStateHandler()
-window.push_handlers(keys)
-
-music = pyglet.resource.media('shika-no-toone.ogg')
-music.play()
-
-FPS = 60
-
-pyglet.clock.schedule_interval(update, (1.0/FPS))
-pyglet.clock.set_fps_limit(FPS)
-pyglet.app.run()
+game = Game(options)
+state = BambooWarriorGameState(game)
+game.set_gamestate(state)
+game.run()
