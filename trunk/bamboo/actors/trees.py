@@ -9,7 +9,36 @@ from base import Actor
 from bamboo.geom import Vec2
 
 
-class BambooTree(Actor):
+class Climbable(object):
+	def __init__(self):
+		self.actors = []
+
+	def is_climbable(self):
+		return True
+
+	def add_actor(self, a):
+		a.climbing = self
+		a.climbing_height = self.height_for_y(a.y)
+		self.actors.append(a)
+
+	def remove_actor(self, a):
+		a.climbing = None
+		self.actors.remove(a)
+
+	def climb_up(self, a):
+		a.climbing_height = min(self.height, a.climbing_height + 10.0 / self.PIECE_HEIGHT)
+
+	def climb_down(self, a):
+		a.climbing_height = max(0, a.climbing_height - 10.0 / self.PIECE_HEIGHT)
+
+	def height_for_y(self, y):
+		raise NotImplementedError("Climbable objects must implement .height_for_y()")
+
+	def distance_from(self, x, y):
+		raise NotImplementedError("Climbable objects must implement .distance_from()")
+
+
+class BambooTree(Actor, Climbable):
 	height = 20
 
 	PIECE_HEIGHT = 64
@@ -17,6 +46,7 @@ class BambooTree(Actor):
 	TEX_PERIOD = 1
 
 	def __init__(self, x=60, height=20, angle=0):
+		Climbable.__init__(self)
 		self.height = height
 		self.x = x
 		self.y = 0
@@ -27,6 +57,43 @@ class BambooTree(Actor):
 
 	def on_spawn(self):
 		self.wind_phase = 0.1 * self.x
+
+	def distance_from(self, x, y):
+		"""Estimate the distance from x, y to this tree. This only works for small wobbly angles."""
+		da = self.wobble_angle / self.height
+
+		pos = Vec2(self.x, self.y)
+		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
+		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
+
+		if pos.y > y:
+			return (Vec2(x, y) - pos).mag()
+
+		for i in range(self.height + 1):
+			if pos.y > y:
+				return abs(pos.x - x)
+			pos += step
+			step.rotate(da)	
+		
+		return (Vec2(x, y) - pos).mag()
+
+	def height_for_y(self, y):
+		"""Estimate the height in this tree for a coordinate of y. This only works for small wobble angles."""
+		da = self.wobble_angle / self.height
+
+		pos = Vec2(self.x, self.y)
+		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
+		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
+
+		for i in range(self.height + 1):
+			if step.y <= 0:
+				raise ValueError("Tree does not reach a height of %f." % y)
+			next = pos + step
+			if next.y >= y:
+				return i + float(y - pos.y) / step.y
+			pos += step
+			step.rotate(da)	
+		raise ValueError("Tree does not reach a height of %f." % y)
 
 	@classmethod
 	def on_class_load(cls):
@@ -78,6 +145,11 @@ class BambooTree(Actor):
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
 
+		actor_segments = {}
+		for a in self.actors:
+			h = int(a.climbing_height)
+			actor_segments.setdefault(h, []).append(a)
+
 		for i in range(self.height + 1):
 			self.set_trunk_vertex(2 * i, pos - radius)
 			self.set_trunk_vertex(2 * i + 1, pos + radius)
@@ -86,6 +158,12 @@ class BambooTree(Actor):
 				f.x = p.x
 				f.y = p.y
 				f.rotation = -radius.angle_in_degrees()
+
+			for a in actor_segments.get(i, []):
+				h = a.climbing_height - i
+				apos = pos + h * step
+				a.x, a.y = apos
+				a.rotation = -radius.angle_in_degrees()
 
 			pos += step
 			step = step.rotate(da)
@@ -98,6 +176,7 @@ class BambooTree(Actor):
 
 	def draw(self):
 		self.batch.draw()
+
 
 
 class BackgroundGroup(pyglet.graphics.Group):
@@ -122,6 +201,9 @@ class BackgroundBambooTree(BambooTree):
 	def __init__(self, *args, **kwargs):
 		self.shadow = random.random() * 0.7
 		super(BackgroundBambooTree, self).__init__(*args, **kwargs)	
+
+	def is_climbable(self):
+		return False
 
 	@classmethod
 	def on_class_load(cls):
