@@ -26,7 +26,7 @@ class Climbable(object):
 		self.actors.remove(a)
 
 	def climb_up(self, a):
-		a.climbing_height = min(self.height, a.climbing_height + 10.0 / self.PIECE_HEIGHT)
+		a.climbing_height = min(self.height - 2, a.climbing_height + 10.0 / self.PIECE_HEIGHT)
 
 	def climb_down(self, a):
 		a.climbing_height = max(0, a.climbing_height - 10.0 / self.PIECE_HEIGHT)
@@ -44,6 +44,7 @@ class BambooTree(Actor, Climbable):
 	PIECE_HEIGHT = 64
 	RADIUS = 12.5
 	TEX_PERIOD = 1
+	THINNING = 0.98		# trees get thinner as you go up, by this ratio per segment
 
 	def __init__(self, x=60, height=20, angle=0):
 		Climbable.__init__(self)
@@ -114,8 +115,10 @@ class BambooTree(Actor, Climbable):
 		tex_coords = []
 
 		h = 0
+		r = self.RADIUS
 		for i in range(self.height + 1):
 			vertices += [-self.RADIUS, h, self.RADIUS, h]
+			r = r * self.THINNING
 			tex_coords += [tex.tex_coords[0], (i + 1) * self.TEX_PERIOD, tex.tex_coords[3], (i + 1) * self.TEX_PERIOD]
 			h += self.PIECE_HEIGHT
 
@@ -167,7 +170,7 @@ class BambooTree(Actor, Climbable):
 
 			pos += step
 			step = step.rotate(da)
-			radius = radius.rotate(da)
+			radius = radius.rotate(da) * self.THINNING
 
 	def update(self):
 		self.wind_phase += 1.0 / self.height
