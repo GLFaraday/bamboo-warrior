@@ -88,9 +88,13 @@ class BambooWarriorGameState(GameState):
 	def start_level(self, level):
 		from bamboo.levelloader import SVGLevelLoader
 		from bamboo.scene import Scene
+		from bamboo.camera import LevelCamera
+
 		loader = SVGLevelLoader()
 		self.level = loader.load(level)
 		self.scene = Scene(self.game.window, self.level)
+		self.scene.camera = LevelCamera.for_window(self.scene.window, level=self.level)
+		self.level.restart()
 
 	def start(self):
 		"""Start is called when the gamestate is initialised"""
@@ -107,8 +111,13 @@ class BambooWarriorGameState(GameState):
 		if keys[key.Z]:
 			samurai.jump()
 
-		if keys[key.DOWN]:
-			samurai.crouch()
+		if keys[key.UP]:
+			samurai.climb_up()
+		elif keys[key.DOWN]:
+			if samurai.is_climbing():
+				samurai.climb_down()
+			else:
+				samurai.crouch()
 		elif keys[key.RIGHT]:
 			samurai.run_right()
 		elif keys[key.LEFT]:
@@ -121,4 +130,5 @@ class BambooWarriorGameState(GameState):
 		self.level.update()
 
 	def draw(self):
+		self.scene.camera.move_to(self.samurai.x, self.samurai.y)
 		self.scene.draw()

@@ -5,6 +5,30 @@ from pyglet.gl import *
 
 from bamboo.geom import Vec2
 
+class TerrainGroup(pyglet.graphics.Group):
+	def __init__(self, colour, texture, parent=None):
+		super(TerrainGroup, self).__init__(parent)
+		self.colour = colour
+		self.texture = texture
+
+	def set_state(self):
+		glActiveTexture(GL_TEXTURE0)
+		glEnable(GL_TEXTURE_2D)
+		glBindTexture(GL_TEXTURE_2D, self.colour.id)
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE)
+
+		glActiveTexture(GL_TEXTURE1)
+		glEnable(GL_TEXTURE_2D)
+		glBindTexture(GL_TEXTURE_2D, self.texture.id)
+		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE)
+	
+		glActiveTexture(GL_TEXTURE0)
+
+	def unset_state(self):
+		glActiveTexture(GL_TEXTURE1)
+		glDisable(GL_TEXTURE_2D)
+		glActiveTexture(GL_TEXTURE0)
+		
 
 class Terrain(object):
 	def __init__(self, outline):
@@ -45,18 +69,21 @@ class Terrain(object):
 
 		earth_vertices = []
 		earth_texcoords = []
+		earth_colours = [40, 23, 11, 148, 99, 66] * len(self.outline)
+		colour_texcoords = []
+
 		grass_vertices = []
 		grass_texcoords = []
 
 		for v in self.outline:
 			earth_vertices += [v.x, 0, v.x, v.y]
-			earth_texcoords += [v.x / 256.0, 1 - v.y / 256.0, v.x / 256.0, 1]
+			earth_texcoords += [v.x / 256.0, 0, v.x / 256.0,v.y / 256.0]
 
 			# TODO: split grass at regular intervals for wind effect
 			grass_vertices += [v.x, v.y - 5, v.x, v.y + self.grass.height - 5]
 			grass_texcoords += [v.x / 128.0, self.grass.tex_coords[1], v.x / 128.0, self.grass.tex_coords[7]]
 		
-		batch.add(len(earth_vertices) / 2, GL_QUAD_STRIP, earthgroup, ('v2f', earth_vertices), ('t2f', earth_texcoords))
+		batch.add(len(earth_vertices) / 2, GL_QUAD_STRIP, earthgroup, ('v2f', earth_vertices), ('t2f', earth_texcoords), ('c3B', earth_colours))
 		self.grass_list = batch.add(len(grass_vertices) / 2, GL_QUAD_STRIP, grassgroup, ('v2f', grass_vertices), ('t2f', grass_texcoords))
 		
 		self.batch = batch

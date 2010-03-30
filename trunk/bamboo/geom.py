@@ -46,3 +46,32 @@ class Vec2(object):
 
 	def angle_in_degrees(self):
 		return self.angle() / math.pi * 180
+
+
+class Rect(object):
+	"""An axis-aligned rectangle"""
+	def __init__(self, l, b, w, h):
+		self.l = l
+		self.b = b
+		self.w = w
+		self.h = h
+
+	def _t(self):
+		return self.b + self.h
+	t = property(_t)
+
+	def _r(self):
+		return self.l + self.w
+	r = property(_r)
+
+	def bottomleft(self):
+		return Vec2(self.l, self.b)
+
+	def topleft(self):
+		return Vec2(self.l, self.t)
+	
+	def topright(self):
+		return Vec2(self.r, self.t)
+
+	def bottomright(self):
+		return Vec2(self.r, self.b)
