@@ -1,6 +1,6 @@
 from base import Actor
 
-GRAVITY = 3
+GRAVITY = 0.5
 
 class Samurai(Actor):
 	FALL_SPEED = -5		#threshold at which to play falling animation
@@ -22,9 +22,11 @@ class Samurai(Actor):
 				self.play_animation('clinging-lookingout')
 			else:
 				self.play_animation('clinging-lookingacross')
+			self.vx = 10
+			self.vy = 8
 		else:
 			self.dir = 'r'
-			self.vx = min(15, self.vx + 5)
+			self.vx = min(10, self.vx + 1)
 			self.crouching = False
 
 	def run_left(self):
@@ -33,9 +35,11 @@ class Samurai(Actor):
 				self.play_animation('clinging-lookingout')
 			else:
 				self.play_animation('clinging-lookingacross')
+			self.vx = -10
+			self.vy = 8
 		else:
 			self.dir = 'l'
-			self.vx = max(-15, self.vx - 5)
+			self.vx = max(-10, self.vx - 1)
 			self.crouching = False
 
 	def is_climbing(self):
@@ -87,8 +91,8 @@ class Samurai(Actor):
 	def jump(self):
 		if self.is_on_ground():
 			self.crouching = False
-			self.vy = 30
-			self.y += 30 # leave the ground
+			self.vy = 13
+			self.y += 15 # leave the ground
 			self.play_sound('jumping')
 		elif self.is_climbing():
 			self.climbing.remove_actor(self)
@@ -117,6 +121,7 @@ class Samurai(Actor):
 
 	def update(self):
 		if not self.is_climbing():
+			self.rotation = 0
 			self.x += self.vx
 			gh = self.level.ground.height_at(self.x)
 			if not self.is_on_ground():

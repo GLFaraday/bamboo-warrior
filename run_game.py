@@ -90,7 +90,8 @@ window.push_handlers(keys)
 music = pyglet.resource.media('shika-no-toone.ogg')
 music.play()
 
-FPS = 30
+FPS = 60
+
 pyglet.clock.schedule_interval(update, (1.0/FPS))
 pyglet.clock.set_fps_limit(FPS)
 pyglet.app.run()
