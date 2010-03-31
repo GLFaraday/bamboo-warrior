@@ -98,8 +98,9 @@ class BambooTree(Actor, Climbable):
 	@classmethod
 	def on_class_load(cls):
 		cls.load_texture('piece', 'bamboo-piece.png', anchor_x='center')
-		cls.load_texture('leaf1', 'bamboo-leaf1.png', anchor_x='right')
-		cls.load_texture('leaf2', 'bamboo-leaf2.png', anchor_x='right')
+		cls.load_directional_sprite('leaf1', 'bamboo-leaf1.png', anchor_x='right')
+		cls.load_directional_sprite('leaf2', 'bamboo-leaf2.png', anchor_x='right')
+		cls.load_sprite('top', 'bamboo-top.png', anchor_x=75)
 
 	def get_parent_group(self):
 		return None
@@ -128,11 +129,12 @@ class BambooTree(Actor, Climbable):
 		for i in range(self.height):
 			prob = self.height - i
 			if random.random() * prob < 1:
-				l = random.choice(['leaf1', 'leaf2'])
-				self.foliage.setdefault(i, []).append((-1, pyglet.sprite.Sprite(self.textures[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
+				l = random.choice(['leaf1-l', 'leaf2-l'])
+				self.foliage.setdefault(i, []).append((1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
 			if random.random() * prob < 1:
-				l = random.choice(['leaf1', 'leaf2'])
-				self.foliage.setdefault(i, []).append((01, pyglet.sprite.Sprite(self.textures[l].get_transform(flip_x=True), x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
+				l = random.choice(['leaf1-r', 'leaf2-r'])
+				self.foliage.setdefault(i, []).append((-1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
+		self.foliage.setdefault(self.height, []).append((0, pyglet.sprite.Sprite(self.graphics['top'], batch=self.batch, group=parent_group)))
 
 	def set_trunk_vertex(self, i, v):
 		x, y = v

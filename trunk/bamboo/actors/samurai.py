@@ -88,12 +88,12 @@ class Samurai(Character):
 		elif self.is_climbing():
 			self.climbing.remove_actor(self)
 
-	def play_animation(self, name):
+
+	def play_animation(self, name, directional=True):
 		"""Set the current animation""" 
-		k = name + '-' + self.dir
-		if self.current == k:
-			return 
-		self.current = k
+		if directional:
+			name = name + '-' + self.dir
+		super(Samurai, self).play_animation(name)
 
 	def update_animation(self):
 		if not self.is_climbing():
@@ -137,9 +137,3 @@ class Samurai(Character):
 
 	def on_spawn(self):
 		self.play_animation('standing')
-
-	def draw(self):
-		sprite = self.graphics[self.current]
-		sprite.set_position(self.pos.x, self.pos.y)
-		sprite.rotation = self.rotation
-		sprite.draw() 

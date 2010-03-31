@@ -47,7 +47,7 @@ class ResourceTracker(object):
 			resource = cls.__name__.lower() + '-' + name + '.png'
 		im = pyglet.resource.image(resource)
 		set_anchor(im, anchor_x, anchor_y)
-		cls.graphics[name] = pyglet.sprite.Sprite(im)
+		cls.graphics[name] = im
 
 	@classmethod
 	def load_directional_sprite(cls, name, resource=None, anchor_x='center', anchor_y=0):
@@ -55,8 +55,8 @@ class ResourceTracker(object):
 			resource = cls.__name__.lower() + '-' + name + '.png'
 		im = pyglet.resource.image(resource)
 		set_anchor(im, anchor_x, anchor_y)
-		cls.graphics[name + '-r'] = pyglet.sprite.Sprite(im)
-		cls.graphics[name + '-l'] = pyglet.sprite.Sprite(im.get_transform(flip_x=True))
+		cls.graphics[name + '-r'] = im
+		cls.graphics[name + '-l'] = im.get_transform(flip_x=True)
 
 	@classmethod
 	def load_sound(cls, name, resource=None):
@@ -72,8 +72,8 @@ class ResourceTracker(object):
 		for f in frame_textures:
 			set_anchor(f, anchor_x, anchor_y)
 		anim = pyglet.image.Animation.from_image_sequence(frame_textures, framerate)
-		cls.graphics[name + '-r'] = pyglet.sprite.Sprite(anim) 
-		cls.graphics[name + '-l'] = pyglet.sprite.Sprite(anim.get_transform(flip_x=True))
+		cls.graphics[name + '-r'] = anim
+		cls.graphics[name + '-l'] = anim.get_transform(flip_x=True)
 
 	@classmethod
 	def on_class_load(cls):
