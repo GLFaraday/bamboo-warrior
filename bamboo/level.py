@@ -1,3 +1,5 @@
+from bamboo.geom import Vec2
+
 class ActorSpawn(object):
 	NAME_MAP = {
 		'BambooTree': 'bamboo.actors.trees.BambooTree',
@@ -43,8 +45,7 @@ class Level(object):
 
 		if y is None:
 			y = self.ground.height_at(x)
-		actor.x = x
-		actor.y = y
+		actor.pos = Vec2(x, y)
 		actor.level = self
 
 		self.actors.append(actor)
@@ -63,14 +64,14 @@ class Level(object):
 		for a in self.actors:
 			a.update()
 
-	def get_nearest_climbable(self, x, y):
+	def get_nearest_climbable(self, pos):
 		"""Return the nearest climbable and the distance to that climbable."""
 		from bamboo.actors.trees import Climbable
 		nearest = None
 		distance = None
 		for a in self.actors:
 			if isinstance(a, Climbable) and a.is_climbable():
-				d = a.distance_from(x, y)
+				d = a.distance_from(pos)
 				if nearest is None or d < distance:
 					nearest = a
 					distance = d

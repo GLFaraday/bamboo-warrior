@@ -1,14 +1,16 @@
-from base import Actor
+from base import Character
+from bamboo.geom import Vec2
 
-GRAVITY = 0.5
 
-class Samurai(Actor):
+class Samurai(Character):
 	FALL_SPEED = -10		#threshold at which to play falling animation
+	AIR_ACCEL = Vec2(1.5, 0)
+	GROUND_ACCEL = Vec2(10, 0)
+	JUMP_IMPULSE = Vec2(0, 35)
 
 	def __init__(self):
+		super(Samurai, self).__init__(self)
 		self.dir = 'r'
-		self.vx = 0
-		self.vy = 0
 		self.rotation = 0
 		self.current = None
 		self.load_resources()
@@ -22,11 +24,13 @@ class Samurai(Actor):
 				self.play_animation('clinging-lookingout')
 			else:
 				self.play_animation('clinging-lookingacross')
-			self.vx = 10
-			self.vy = 8
+			self.apply_force(Vec2(10, 0))
 		else:
 			self.dir = 'r'
-			self.vx = min(10, self.vx + 1)
+			if self.is_on_ground():
+				self.apply_force(self.GROUND_ACCEL)
+			else:
+				self.apply_force(self.AIR_ACCEL)
 			self.crouching = False
 
 	def run_left(self):
@@ -35,11 +39,13 @@ class Samurai(Actor):
 				self.play_animation('clinging-lookingout')
 			else:
 				self.play_animation('clinging-lookingacross')
-			self.vx = -10
-			self.vy = 8
+			self.apply_force(Vec2(-10, 0))
 		else:
 			self.dir = 'l'
-			self.vx = max(-10, self.vx - 1)
+			if self.is_on_ground():
+				self.apply_force(-self.GROUND_ACCEL)
+			else:
+				self.apply_force(-self.AIR_ACCEL)
 			self.crouching = False
 
 	def is_climbing(self):
@@ -47,7 +53,7 @@ class Samurai(Actor):
 
 	def climb_up(self):
 		if not self.is_climbing():
-			tree, distance = self.level.get_nearest_climbable(self.x, self.y)
+			tree, distance = self.level.get_nearest_climbable(self.pos)
 			if not tree or distance > 30:
 				return
 			tree.add_actor(self)
@@ -57,42 +63,27 @@ class Samurai(Actor):
 
 	def climb_down(self):
 		if not self.is_climbing():
-			tree, distance = self.level.get_nearest_climbable(self.x, self.y)
+			tree, distance = self.level.get_nearest_climbable(self.pos)
 			if not tree or distance > 30:
 				return
 			tree.add_actor(self)
 		else:
 			self.climbing.climb_down(self)
 
-	def apply_friction(self):
-		if not self.is_on_ground():
-			return
-
-		if self.vx > 0:
-			self.vx = max(0, self.vx - 1)
-		elif self.vx < 0:
-			self.vx = min(0, self.vx + 1)
-
 	def crouch(self):
 		if self.is_on_ground():
 			self.crouching = True
-			self.apply_friction()
 
 	def stop(self):
 		if self.is_climbing():
 			self.play_animation('clinging')
 		else:
 			self.crouching = False
-			self.apply_friction()
-
-	def is_on_ground(self):
-		return self.y <= (self.level.ground.height_at(self.x) + 2)
 
 	def jump(self):
 		if self.is_on_ground():
 			self.crouching = False
-			self.vy = 13
-			self.y += 15 # leave the ground
+			self.apply_impulse(self.JUMP_IMPULSE)
 			self.play_sound('jumping')
 		elif self.is_climbing():
 			self.climbing.remove_actor(self)
@@ -109,31 +100,23 @@ class Samurai(Actor):
 			if self.crouching:
 				self.play_animation('crouching')
 			elif self.is_on_ground():
-				if self.vx:
+				if self.v.mag() > 0.5:
 					self.play_animation('running')
 				else:
 					self.play_animation('standing')
 			else:
-				if self.vy <= self.FALL_SPEED:
+				if self.v.y <= self.FALL_SPEED:
 					self.play_animation('falling')
 				else:
 					self.play_animation('jumping')
 
 	def update(self):
 		if not self.is_climbing():
+			super(Samurai, self).update()
 			self.rotation = 0
-			self.x += self.vx
-			gh = self.level.ground.height_at(self.x)
-			if not self.is_on_ground():
-				if self.y + self.vy - GRAVITY <= gh + 2:
-					self.y = gh
-					self.vy = 0
-				else:
-					vy0 = self.vy
-					self.vy -= GRAVITY
-					self.y += self.vy
-			else:
-				self.y = gh
+		else:
+			f = self.get_net_force()
+			# TODO: apply force to the tree we're climbing
 		self.update_animation()
 
 	resources_loaded = False
@@ -157,6 +140,6 @@ class Samurai(Actor):
 
 	def draw(self):
 		sprite = self.graphics[self.current]
-		sprite.set_position(self.x, self.y)
+		sprite.set_position(self.pos.x, self.pos.y)
 		sprite.rotation = self.rotation
 		sprite.draw() 

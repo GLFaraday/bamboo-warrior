@@ -130,5 +130,5 @@ class BambooWarriorGameState(GameState):
 		self.level.update()
 
 	def draw(self):
-		self.scene.camera.move_to(self.samurai.x, self.samurai.y)
+		self.scene.camera.move_to(self.samurai.pos)
 		self.scene.draw()
