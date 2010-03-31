@@ -18,11 +18,14 @@ class Vec2(object):
 	def __sub__(self, ano):
 		return Vec2(self.x - ano.x, self.y - ano.y)
 
-	def __neg__(self, ano):
+	def __neg__(self):
 		return Vec2(-self.x, -self.y)
 
 	def __mul__(self, scalar):
 		return Vec2(self.x * scalar, self.y * scalar)
+
+	def __div__(self, scalar):
+		return self * (1.0 / scalar)
 
 	__rmul__ = __mul__
 

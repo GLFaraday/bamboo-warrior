@@ -18,7 +18,7 @@ class Climbable(object):
 
 	def add_actor(self, a):
 		a.climbing = self
-		a.climbing_height = self.height_for_y(a.y)
+		a.climbing_height = self.height_for_y(a.pos.y)
 		self.actors.append(a)
 
 	def remove_actor(self, a):
@@ -34,7 +34,7 @@ class Climbable(object):
 	def height_for_y(self, y):
 		raise NotImplementedError("Climbable objects must implement .height_for_y()")
 
-	def distance_from(self, x, y):
+	def distance_from(self, pos):
 		raise NotImplementedError("Climbable objects must implement .distance_from()")
 
 
@@ -49,40 +49,39 @@ class BambooTree(Actor, Climbable):
 	def __init__(self, x=60, height=20, angle=0):
 		Climbable.__init__(self)
 		self.height = height
-		self.x = x
-		self.y = 0
+		self.pos = Vec2(x, 0)
 		self.base_angle = angle
 		self.wobble_angle = 0
 		self.wind_phase = 0
 		self.create_sprites()
 
 	def on_spawn(self):
-		self.wind_phase = 0.1 * self.x
+		self.wind_phase = 0.1 * self.pos.x
 
-	def distance_from(self, x, y):
+	def distance_from(self, p):
 		"""Estimate the distance from x, y to this tree. This only works for small wobbly angles."""
 		da = self.wobble_angle / self.height
 
-		pos = Vec2(self.x, self.y)
+		pos = self.pos
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
 
-		if pos.y > y:
-			return (Vec2(x, y) - pos).mag()
+		if pos.y > p.y:
+			return (p - pos).mag()
 
 		for i in range(self.height + 1):
-			if pos.y > y:
-				return abs(pos.x - x)
+			if pos.y > p.y:
+				return abs(pos.x - p.x)
 			pos += step
 			step.rotate(da)	
 		
-		return (Vec2(x, y) - pos).mag()
+		return (p - pos).mag()
 
 	def height_for_y(self, y):
 		"""Estimate the height in this tree for a coordinate of y. This only works for small wobble angles."""
 		da = self.wobble_angle / self.height
 
-		pos = Vec2(self.x, self.y)
+		pos = self.pos
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
 
@@ -130,10 +129,10 @@ class BambooTree(Actor, Climbable):
 			prob = self.height - i
 			if random.random() * prob < 1:
 				l = random.choice(['leaf1', 'leaf2'])
-				self.foliage.setdefault(i, []).append((-1, pyglet.sprite.Sprite(self.textures[l], x=self.x, y=self.PIECE_HEIGHT * i + self.y, batch=self.batch, group=parent_group)))
+				self.foliage.setdefault(i, []).append((-1, pyglet.sprite.Sprite(self.textures[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
 			if random.random() * prob < 1:
 				l = random.choice(['leaf1', 'leaf2'])
-				self.foliage.setdefault(i, []).append((01, pyglet.sprite.Sprite(self.textures[l].get_transform(flip_x=True), x=self.x, y=self.PIECE_HEIGHT * i + self.y, batch=self.batch, group=parent_group)))
+				self.foliage.setdefault(i, []).append((01, pyglet.sprite.Sprite(self.textures[l].get_transform(flip_x=True), x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
 
 	def set_trunk_vertex(self, i, v):
 		x, y = v
@@ -144,7 +143,7 @@ class BambooTree(Actor, Climbable):
 		"""Generator for the vertex list. Iterate to give a sequence of Vec2 objects"""
 		da = self.wobble_angle / self.height
 
-		pos = Vec2(self.x, self.y)
+		pos = self.pos
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
 
@@ -165,7 +164,8 @@ class BambooTree(Actor, Climbable):
 			for a in actor_segments.get(i, []):
 				h = a.climbing_height - i
 				apos = pos + h * step
-				a.x, a.y = apos
+				a.v = apos - a.pos
+				a.pos = apos
 				a.rotation = -radius.angle_in_degrees()
 
 			pos += step

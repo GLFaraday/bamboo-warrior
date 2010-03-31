@@ -1,4 +1,4 @@
-from bamboo.geom import Rect
+from bamboo.geom import Rect, Vec2
 from bamboo.scene import Viewport
 
 
@@ -18,17 +18,15 @@ class Camera(object):
 
 class FixedCamera(Camera):
 	"""A camera with a fixed position"""
-	def __init__(self, width, height, center_x=0, center_y=0):
+	def __init__(self, width, height, center=Vec2(0, 0)):
 		super(FixedCamera, self).__init__(width, height)
-		self.x = center_x
-		self.y = center_y
+		self.center = center
 
-	def move_to(self, center_x, center_y):
-		self.x = center_x
-		self.y = center_y
+	def move_to(self, pos):
+		self.center = pos
 
 	def get_viewport(self):
-		return Viewport(self.width, self.height, center_x=self.x, center_y=self.y)
+		return Viewport(self.width, self.height, center_x=self.center.x, center_y=self.center.y)
 
 
 class MovingCamera(FixedCamera):
@@ -48,19 +46,18 @@ class TrackingCamera(MovingCamera):
 		self.actor = actor
 
 	def update(self):
-		self.move_to(self.actor.x, self.actor.y)
+		self.move_to(self.actor.pos)
 
 
 class LevelCamera(MovingCamera):
 	"""A camera that is restricted to the visible region of a level"""
-	def __init__(self, width, height, level, center_x=0, center_y=0):
-		super(LevelCamera, self).__init__(width, height, center_x, center_y)
+	def __init__(self, width, height, level, center=Vec2(0, 0)):
+		super(LevelCamera, self).__init__(width, height, center)
 		self.level = level
 
-	def move_to(self, x, y):
+	def move_to(self, pos):
 		hw = self.width / 2
 		hh = self.height / 2
-		x = max(hw, min(self.level.width - hw, x))
-		y = max(hh, y)
-		self.x = x
-		self.y = y
+		x = max(hw, min(self.level.width - hw, pos.x))
+		y = max(hh, pos.y)
+		self.center = Vec2(x, y)
