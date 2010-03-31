@@ -1,7 +1,10 @@
 import re
+import os.path
 
 import pyglet
 from pyglet.window import key
+from pyglet import gl
+
 
 FPS = 60
 
@@ -49,9 +52,22 @@ class Game(object):
 
 	def on_key_press(self, code, modifiers):
 		if code == key.F12:
-			print "Wrote", scene.save_screenshot()
+			print "Wrote", self.save_screenshot()
 			return pyglet.event.EVENT_HANDLED
 		return self.gamestate.on_key_press(code, modifiers)
+
+	def save_screenshot(self):
+		"""Save a screenshot to the grabs/ directory"""
+		gl.glPixelTransferf(gl.GL_ALPHA_BIAS, 1.0)	# don't transfer alpha channel
+		image = pyglet.image.ColorBufferImage(0, 0, self.window.width, self.window.height)
+		n = 1
+		outfile = 'grabs/screenshot.png'
+		while os.path.exists(outfile):
+			n += 1
+			outfile = 'grabs/screenshot-%d.png' % n
+		image.save(outfile)
+		gl.glPixelTransferf(gl.GL_ALPHA_BIAS, 0.0)	# restore alpha channel transfer
+		return outfile
 
 	def init_events(self):
 		self.keys = key.KeyStateHandler()

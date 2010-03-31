@@ -1,10 +1,16 @@
+import pyglet
+
 from bamboo.resources import ResourceTracker
 from bamboo.geom import Vec2
 
 
 class Actor(ResourceTracker):
 	initial_animation = None
+	current = None
+	sprite = None
+
 	level = None
+	rotation = 0
 
 	def play_sound(self, name):
 		"""Play a named sound from the Actor's resources"""
@@ -12,13 +18,16 @@ class Actor(ResourceTracker):
 
 	def play_animation(self, name):
 		"""Set the current animation""" 
+		if self.current == name:
+			return
 		self.current = name
+		self.sprite = pyglet.sprite.Sprite(self.graphics[name], self.pos.x, self.pos.y)
 
 	def draw(self):
 		"""Subclasses should implement this method to draw the actor"""	
-		sprite = self.graphics[self.current]
-		sprite.set_position(self.pos.x, self.pos.y)
-		sprite.draw() 
+		self.sprite.set_position(self.pos.x, self.pos.y)
+		self.sprite.rotation = self.rotation
+		self.sprite.draw() 
 
 	def update(self):
 		"""Subclasses can implement this method if necessary to implement game logic"""

@@ -6158,6 +6158,20 @@
        inkscape:vp_y="0 : 1000 : 0"
        inkscape:vp_x="0 : 0.5 : 1"
        sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective8132"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <inkscape:perspective
+       id="perspective8172"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -6167,10 +6181,10 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="-549.38726"
-     inkscape:cy="-370.01268"
+     inkscape:cx="211.86399"
+     inkscape:cy="1045.9609"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:snap-global="false"
      inkscape:window-width="1680"
@@ -11474,8 +11488,7 @@
      inkscape:label="Skeletons"
      inkscape:groupmode="layer"
      id="layer1"
-     style="display:none"
-     sodipodi:insensitive="true">
+     style="display:inline">
     <path
        sodipodi:nodetypes="cccccccccccccccccccsssc"
        d="m -1227.9544,1272.6309 28.9241,-13.4861 3.4149,-32.033 -14.6381,-0.9974 -17.3541,21.1884 -9.6323,26.0328 m 16.9074,-12.5475 8.0394,1.3859 13.2683,19.6954 -4.0275,29.4281 8.9267,7.0229 m -7.7708,-98.068 -3.5391,7.5009 -15.6104,32.8436 -6.4205,-1.7204 -4.1465,29.526 -15.1912,21.0806 5.7386,10.1291 m 55.7252,-108.8998 c -1.7867,6.6682 -7.5598,10.9153 -12.8945,9.4859 -5.3346,-1.4295 -8.2107,-7.994 -6.424,-14.6623 1.7868,-6.6684 7.5598,-10.9153 12.8945,-9.4859 5.3347,1.4294 8.2108,7.9939 6.424,14.6623 z"
@@ -12727,11 +12740,14 @@
     <g
        transform="translate(1.499435,1.364964)"
        style="display:inline"
-       id="g16286">
+       id="g16286"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/bamboo-top.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <use
          height="1052.3622"
          width="744.09448"
-         transform="matrix(0.67503084,0.08205713,-0.12067226,0.9926924,246.69894,-216.46747)"
+         transform="matrix(0.46479516,0.08205713,-0.08308936,0.9926924,233.33354,-216.46747)"
          id="use16105"
          xlink:href="#g3624"
          y="0"
@@ -12741,12 +12757,12 @@
          y="0"
          xlink:href="#g3624"
          id="use16121"
-         transform="matrix(0.41434855,0.18496149,-0.31157494,0.94589846,298.53958,-259.90392)"
+         transform="matrix(0.28530134,0.18496149,-0.21453616,0.94589846,269.02862,-259.90392)"
          width="744.09448"
          height="1052.3622" />
       <g
          id="g16107"
-         transform="translate(-113,-177.5)"
+         transform="translate(-114,-183.5)"
          inkscape:export-filename="/home/mauve/dev/bamboo/resources/sprites/bamboo-leaf1.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90">
@@ -12863,22 +12879,22 @@
          y="0"
          xlink:href="#g3624"
          id="use16121-6"
-         transform="matrix(0.45302889,0.02569636,0.04478573,0.99488546,187.76124,-217.92598)"
+         transform="matrix(0.31193484,0.02569636,0.03083739,0.99488546,192.75175,-217.92598)"
          width="744.09448"
          height="1052.3622"
-         style="opacity:0.93999999;display:inline" />
+         style="display:inline" />
       <use
-         style="opacity:0.93999999;display:inline"
+         style="display:inline"
          height="1052.3622"
          width="744.09448"
-         transform="matrix(0.31466019,0.01156072,3.2153231e-4,0.99034303,193.85296,-273.59511)"
+         transform="matrix(0.21666052,0.01156072,2.2139235e-4,0.99034303,196.94623,-273.59511)"
          id="use16214"
          xlink:href="#g3624"
          y="0"
          x="0" />
       <g
          id="g16085-7"
-         transform="translate(34.286643,-152.66823)"
+         transform="translate(42.286643,-156.66823)"
          inkscape:export-filename="/home/mauve/dev/bamboo/resources/sprites/bamboo-leaf2.png"
          inkscape:export-xdpi="90"
          inkscape:export-ydpi="90"
@@ -13009,6 +13025,84 @@
            width="744.09448"
            transform="matrix(0.4177566,-0.90855899,0.90855899,0.4177566,184.77675,-46.289205)"
            id="use16284"
+           xlink:href="#path3647"
+           y="0"
+           x="0"
+           inkscape:transform-center-x="-21"
+           inkscape:transform-center-y="40" />
+      </g>
+      <g
+         style="display:inline"
+         id="g3663-3"
+         transform="matrix(0.76786183,0,0,0.76786183,-56.055094,-231.02329)"
+         inkscape:export-filename="/home/mauve/dev/bamboo/resources/sprites/bamboo-leaf1.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <path
+           sodipodi:nodetypes="cc"
+           id="path3653-8"
+           d="m 347,203.36218 -21,14.5"
+           style="color:#000000;fill:none;stroke:#688447;stroke-width:2.60463524;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+        <use
+           height="1052.3622"
+           width="744.09448"
+           transform="translate(512,-42)"
+           id="use3655-7"
+           xlink:href="#path3647"
+           y="0"
+           x="0" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#path3647"
+           id="use3657-4"
+           transform="matrix(0.81281148,0.58252683,-0.58252683,0.81281148,625.42093,102.116)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           inkscape:transform-center-y="40"
+           inkscape:transform-center-x="-21"
+           x="0"
+           y="0"
+           xlink:href="#path3647"
+           id="use3661-5"
+           transform="matrix(0.4177566,-0.90855899,0.90855899,0.4177566,184.77675,-46.289205)"
+           width="744.09448"
+           height="1052.3622" />
+      </g>
+      <g
+         inkscape:export-ydpi="90"
+         inkscape:export-xdpi="90"
+         inkscape:export-filename="/home/mauve/dev/bamboo/resources/sprites/bamboo-leaf1.png"
+         transform="matrix(-0.78571861,0,0,0.78571861,446.85968,-233.93147)"
+         id="g8198"
+         style="display:inline">
+        <path
+           style="color:#000000;fill:none;stroke:#688447;stroke-width:2.54544044;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+           d="m 347,203.36218 -21,14.5"
+           id="path8201"
+           sodipodi:nodetypes="cc" />
+        <use
+           x="0"
+           y="0"
+           xlink:href="#path3647"
+           id="use8203"
+           transform="translate(512,-42)"
+           width="744.09448"
+           height="1052.3622" />
+        <use
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.81281148,0.58252683,-0.58252683,0.81281148,625.42093,102.116)"
+           id="use8205"
+           xlink:href="#path3647"
+           y="0"
+           x="0" />
+        <use
+           height="1052.3622"
+           width="744.09448"
+           transform="matrix(0.4177566,-0.90855899,0.90855899,0.4177566,184.77675,-46.289205)"
+           id="use8207"
            xlink:href="#path3647"
            y="0"
            x="0"
