@@ -23,7 +23,9 @@ class FixedCamera(Camera):
 		self.center = center
 
 	def move_to(self, pos):
-		self.center = pos
+		# NB: floating point camera centers can cause fringes on sprites
+		# integer camera centers seem jumpy
+		self.center = Vec2(x, y)
 
 	def get_viewport(self):
 		return Viewport(self.width, self.height, center_x=self.center.x, center_y=self.center.y)
@@ -60,4 +62,6 @@ class LevelCamera(MovingCamera):
 		hh = self.height / 2
 		x = max(hw, min(self.level.width - hw, pos.x))
 		y = max(hh, pos.y)
+		# NB: floating point camera centers can cause fringes on sprites
+		# integer camera centers seem jumpy
 		self.center = Vec2(x, y)
