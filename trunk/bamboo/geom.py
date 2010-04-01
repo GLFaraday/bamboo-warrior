@@ -1,5 +1,7 @@
 import math
 
+ERROR_TOLERANCE = 1e-9
+
 class Vec2(object):
 	"""A 2D vector object to make vector maths easy"""
 	def __init__(self, x, y):
@@ -24,6 +26,9 @@ class Vec2(object):
 	def __mul__(self, scalar):
 		return Vec2(self.x * scalar, self.y * scalar)
 
+	def __nonzero__(self):
+		return abs(self.x) > ERROR_TOLERANCE or abs(self.y) > ERROR_TOLERANCE
+
 	def __div__(self, scalar):
 		return self * (1.0 / scalar)
 
@@ -35,7 +40,22 @@ class Vec2(object):
 		yield self.y
 
 	def mag(self):
-		return (self.x ** 2 + self.y ** 2) ** 0.5
+		return (self.x * self.x + self.y * self.y) ** 0.5
+
+	def normalized(self):
+		# check for mag smaller than a threshold to eliminate a class of numerical error problems
+		if not self:
+			raise ZeroDivisionError("Normalization of very tiny vector is unlikely to give good results")
+
+		return self / self.mag() 
+
+	def dot(self, ano):
+		return self.x * ano.x + self.y * ano.y
+
+	def component_of(self, ano):
+		"""Component of ano in the direction of self"""
+		n = self.normalized()
+		return n.dot(ano) * n
 
 	def rotate(self, angle):
 		x = self.x
@@ -47,8 +67,15 @@ class Vec2(object):
 	def angle(self):
 		return math.atan2(self.y, self.x)
 
+	def rotate_degrees(self, angle):
+		return self.rotate(angle * math.pi / 180.0)
+
 	def angle_in_degrees(self):
-		return self.angle() / math.pi * 180
+		return self.angle() / math.pi * 180.0
+
+	def perpendicular(self):
+		"""Rotatation through 90 degrees, without trig functions"""
+		return Vec2(-self.y, self.x)
 
 
 class Rect(object):

@@ -25,11 +25,13 @@ class Climbable(object):
 		a.climbing = None
 		self.actors.remove(a)
 
-	def climb_up(self, a):
-		a.climbing_height = min(self.height - 2, a.climbing_height + 10.0 / self.PIECE_HEIGHT)
+	def climb_up(self, a, dist=10.0):
+		a.climbing_height = min(self.height - 2, a.climbing_height + float(dist) / self.PIECE_HEIGHT)
 
-	def climb_down(self, a):
-		a.climbing_height = max(0, a.climbing_height - 10.0 / self.PIECE_HEIGHT)
+	def climb_down(self, a, dist=10.0):
+		a.climbing_height = max(0, a.climbing_height - float(dist) / self.PIECE_HEIGHT)
+		if a.climbing_height == 0:
+			self.remove_actor(a)
 
 	def height_for_y(self, y):
 		raise NotImplementedError("Climbable objects must implement .height_for_y()")
@@ -100,29 +102,38 @@ class BambooTree(Actor, Climbable):
 		cls.load_texture('piece', 'bamboo-piece.png', anchor_x='center')
 		cls.load_directional_sprite('leaf1', 'bamboo-leaf1.png', anchor_x='right')
 		cls.load_directional_sprite('leaf2', 'bamboo-leaf2.png', anchor_x='right')
-		cls.load_sprite('top', 'bamboo-top.png', anchor_x=75)
+		cls.load_sprite('top', 'bamboo-top.png', anchor_x=77, anchor_y=3)
 
-	def get_parent_group(self):
-		return None
+	def get_parent_group(self, parent=None):
+		return parent
 
-	def create_sprites(self):
+	def create_sprites(self, batch=None, parent=None):
 		self.load_resources()
-		self.batch = pyglet.graphics.Batch()
+		if batch:
+			self.batch = batch
+		else:
+			self.batch = pyglet.graphics.Batch()
 		self.foliage = {}
 
 		tex = self.textures['piece']
 		vertices = []
 		tex_coords = []
 
-		h = 0
-		r = self.RADIUS
-		for i in range(self.height + 1):
-			vertices += [-self.RADIUS, h, self.RADIUS, h]
-			r = r * self.THINNING
-			tex_coords += [tex.tex_coords[0], (i + 1) * self.TEX_PERIOD, tex.tex_coords[3], (i + 1) * self.TEX_PERIOD]
-			h += self.PIECE_HEIGHT
+		da = self.wobble_angle / self.height
+		pos = self.pos
+		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
+		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
 
-		parent_group = self.get_parent_group()
+		for i in range(self.height + 1):
+			vertices += list(pos - radius)
+			vertices += list(pos + radius)
+			radius *= self.THINNING
+			tex_coords += [tex.tex_coords[0], (i + 1) * self.TEX_PERIOD, tex.tex_coords[3], (i + 1) * self.TEX_PERIOD]
+			pos += step
+			step = step.rotate(da)
+			radius = radius.rotate(da) * self.THINNING
+
+		parent_group = self.get_parent_group(parent)
 		group = pyglet.sprite.SpriteGroup(self.textures['piece'], GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, parent=parent_group)
 		self.vertex_list = self.batch.add((self.height + 1) * 2, GL_QUAD_STRIP, group, ('v2f', vertices), ('t2f', tex_coords))
 	
@@ -195,6 +206,9 @@ class BackgroundGroup(pyglet.graphics.Group):
 
 	def unset_state(self):
 		glColor3f(1, 1, 1)
+
+	def __eq__(self, ano):
+		return self.__class__ == ano.__class__ and self.depth == ano.depth
 		
 
 class BackgroundBambooTree(BambooTree):
@@ -213,16 +227,17 @@ class BackgroundBambooTree(BambooTree):
 	@classmethod
 	def on_class_load(cls):
 		cls.load_texture('piece', 'bamboo-piece-blurred.png', anchor_x='center')
-		cls.load_texture('leaf1', 'bamboo-leaf1.png', anchor_x='right')
-		cls.load_texture('leaf2', 'bamboo-leaf2.png', anchor_x='right')
+		cls.load_directional_sprite('leaf1', 'bamboo-leaf1.png', anchor_x='right')
+		cls.load_directional_sprite('leaf2', 'bamboo-leaf2.png', anchor_x='right')
+		cls.load_sprite('top', 'bamboo-top.png', anchor_x=77, anchor_y=3)
 
 	def on_spawn(self):
 		self.RADIUS = random.random() ** 0.5 * 10 + 2
 		self.wobble_angle = random.random() * 1 - 0.5
 		self.compute_wobble()
 
-	def get_parent_group(self):
-		return BackgroundGroup(self.shadow)
+	def get_parent_group(self, parent=None):
+		return BackgroundGroup(self.shadow, parent=parent)
 
 	def update(self):
 		pass

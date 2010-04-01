@@ -40,6 +40,7 @@ class Terrain(object):
 	resources_loaded = False
 
 	def height_at(self, x):
+		#TODO: optimise this - quadtree?
 		last = None
 		for i, v in enumerate(self.outline):
 			if x < v.x:
@@ -50,6 +51,17 @@ class Terrain(object):
 			last = v
 		else:
 			return last.y
+
+	def normal_at(self, x):
+		last = None
+		for v in self.outline:
+			if x < v.x:
+				if last is None:
+					return Vec2(0, 1)
+				return (v - last).perpendicular().normalized()
+			last = v
+		else:
+			return Vec2(0, 1)
 
 	@classmethod
 	def load_resources(cls):
