@@ -114,8 +114,8 @@ class BambooWarriorGameState(GameState):
 
 	def start(self):
 		"""Start is called when the gamestate is initialised"""
-		music = pyglet.resource.media('shika-no-toone.ogg')
-		music.play()
+		#music = pyglet.resource.media('shika-no-toone.ogg')
+		#music.play()
 
 		from bamboo.actors.samurai import Samurai
 		from bamboo.actors.ninja import Ninja
@@ -132,22 +132,27 @@ class BambooWarriorGameState(GameState):
 	def update(self, keys):
 		player = self.player
 
-		if keys[key.Z]:
-			player.jump()
-		elif keys[key.X]:
-			player.attack()
+		if self.pc.is_alive():
+			if keys[key.Z]:
+				player.jump()
+			elif keys[key.X]:
+				player.attack()
 
-		if keys[key.UP]:
-			player.up()
-		elif keys[key.DOWN]:
-			player.down()
-		elif keys[key.RIGHT]:
-			player.right()
-		elif keys[key.LEFT]:
-			player.left()
+			if keys[key.UP]:
+				player.up()
+			elif keys[key.DOWN]:
+				player.down()
+			elif keys[key.RIGHT]:
+				player.right()
+			elif keys[key.LEFT]:
+				player.left()
+		else:
+			if keys[key.Z] or keys[key.Z]:
+				self.level.spawn(self.pc, x=60, controller=self.player)
 
 		self.level.update()
 
 	def draw(self):
+		self.scene.update()
 		self.scene.camera.move_to(self.pc.pos)
 		self.scene.draw()

@@ -86,6 +86,10 @@ class Scene(object):
 		self.batch = pyglet.graphics.Batch()
 		self.fps = pyglet.clock.ClockDisplay()
 
+	def update(self):
+		for a in self.level.get_actors():
+			a.update_batch(self.batch)
+
 	def draw(self):
 		viewport = self.camera.get_viewport()
 		self.background.draw()
@@ -93,8 +97,6 @@ class Scene(object):
 		self.background2.draw()
 		# set up matrix for viewport
 		# compute PVS
-		for a in self.level.get_actors():
-			a.update_batch(self.batch)
 		self.batch.draw()	
 		self.level.ground.draw()
 		# render PVS

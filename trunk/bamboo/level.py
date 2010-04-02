@@ -4,6 +4,7 @@ class ActorSpawn(object):
 	NAME_MAP = {
 		'BambooTree': 'bamboo.actors.trees.BambooTree',
 		'Torii': 'bamboo.actors.scenery.Torii',
+		'StandingNinja': 'bamboo.actors.ninja.Ninja',
 	}
 
 	def __init__(self, name, pos):
@@ -73,8 +74,21 @@ class Level(object):
 		for c in self.controllers:
 			c.update()
 
+		# self.collide()
+
 		for a in self.actors:
 			a.update()
+
+	def collide(self):
+		for i, a in enumerate(self.actors):
+			for b in self.actors[i+1:]:
+				if a.collision_mask & b.collision_mask:
+					intersection = a.bounds().intersection(b.bounds())
+					if intersection:
+						d = min(intersection.w, intersection.h) # amount of intersection
+						v = (b.pos - a.pos).normalized() # direction AB
+						a.apply_force(-5 * d * v)
+						b.apply_force(5 * d * v)
 
 	def get_nearest_climbable(self, pos):
 		"""Return the nearest climbable and the distance to that climbable."""
