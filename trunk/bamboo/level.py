@@ -32,14 +32,14 @@ class Level(object):
 		self.ground = ground
 		self.actor_spawns = actor_spawns
 		self.actors = []
+		self.controllers = []
 
 	def restart(self):
 		self.actors = []
 		for spawnpoint in self.actor_spawns:
 			spawnpoint.spawn(self)
 			
-
-	def spawn(self, actor, x, y=None):
+	def spawn(self, actor, x, y=None, controller=None):
 		if not actor._resources_loaded:
 			actor.load_resources()
 
@@ -48,12 +48,20 @@ class Level(object):
 		actor.pos = Vec2(x, y)
 		actor.level = self
 
+		if controller is not None:
+			actor.controller = controller
+			self.controllers.append(controller)
+
 		self.actors.append(actor)
 		actor.on_spawn()
 
 	def kill(self, actor):
 		self.actors.remove(actor)
-		self.actor.level = None
+		if actor.controller:
+			actor.controller.on_character_death()
+			self.controllers.remove(actor.controller)
+		actor.delete()
+		actor.level = None
 
 	def get_actors(self):
 		return self.actors[:]
@@ -61,6 +69,10 @@ class Level(object):
 	def update(self):
 		"""Run physics, update everything in the world"""
 		self.ground.update()
+
+		for c in self.controllers:
+			c.update()
+
 		for a in self.actors:
 			a.update()
 
@@ -81,3 +93,8 @@ class Level(object):
 	def find_playercharacters(self):
 		from bamboo.actors.samurai import Character
 		return [a for a in self.actors if isinstance(a, Character) and a.is_pc]
+
+	def characters_colliding(self, rect):
+		from bamboo.actors.samurai import Character
+		return [a for a in self.actors if isinstance(a, Character) and a.bounds().intersects(rect)]
+		

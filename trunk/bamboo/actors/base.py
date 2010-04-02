@@ -13,6 +13,8 @@ class Actor(ResourceTracker):
 	level = None
 	rotation = 0
 
+	dir = 'r'
+
 	def _get_pos(self):
 		return self._pos
 	
@@ -54,8 +56,10 @@ class Actor(ResourceTracker):
 		"""Play a named sound from the Actor's resources"""
 		self.sounds[name].play()
 
-	def play_animation(self, name):
+	def play_animation(self, name, directional=False):
 		"""Set the current animation""" 
+		if directional:
+			name = name + '-' + self.dir
 		if self.current == name:
 			return
 		self.next = name
@@ -64,7 +68,11 @@ class Actor(ResourceTracker):
 		if self.next is not None:
 			if self.sprite:
 				self.sprite.delete()
-			self.sprite = pyglet.sprite.Sprite(self.graphics[self.next], self.pos.x, self.pos.y, batch=batch)
+			if hasattr(self, 'layer'):
+				group = pyglet.graphics.OrderedGroup(self.layer)
+			else:
+				group = None
+			self.sprite = pyglet.sprite.Sprite(self.graphics[self.next], self.pos.x, self.pos.y, batch=batch, group=group)
 			self.sprite.rotation = self.rotation
 			self.current = self.next
 			self.next = None
@@ -72,6 +80,11 @@ class Actor(ResourceTracker):
 			self.sprite.set_position(self.pos.x, self.pos.y)
 			self.sprite.rotation = self.rotation
 			self.sprite.draw() 
+
+	def delete(self):
+		"""Remove from batch"""
+		if self.sprite:
+			self.sprite.delete()
 
 	def update(self):
 		"""Subclasses can implement this method if necessary to implement game logic"""
@@ -90,10 +103,11 @@ class PhysicalObject(Actor):
 	FRICTION = 0.6
 	LINEAR_DAMPING = 0.0
 
-	def __init__(self, pos):
-		self.pos = pos
+	def __init__(self, pos=Vec2(0,0)):
+		self.pos = Vec2(0, 0)
 		self.v = Vec2(0, 0)
 		self.f = self.get_weight()
+		self.runforce = 0
 	
 	def apply_force(self, vec):
 		self.f += vec
@@ -110,6 +124,8 @@ class PhysicalObject(Actor):
 
 		normalforce = -min(normal.dot(self.f), 0) * normal
 		self.apply_force(normalforce)
+	
+		self.runforce = normalforce.mag() / self.get_weight().mag()
 
 		friction = self.FRICTION * normalforce.mag()	# max friction
 		ground_velocity = tangent.component_of(self.v)
@@ -138,8 +154,10 @@ class PhysicalObject(Actor):
 	def update(self):
 		f = self.get_net_force()
 		accel = f / self.MASS
-		self.v = (self.v + accel) * (1 - self.LINEAR_DAMPING)
-		self.pos += self.v
+
 		g = self.ground_level()
 		if self.pos.y < g:
-			self.pos = Vec2(self.pos.x, g)
+			self.pos -= self.ground_normal().component_of(Vec2(0, self.pos.y - g))
+
+		self.v = (self.v + accel) * (1 - self.LINEAR_DAMPING)
+		self.pos += self.v

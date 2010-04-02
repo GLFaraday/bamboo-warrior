@@ -1,7 +1,7 @@
 import pyglet
 
-from base import PhysicalObject
-from bamboo.geom import Vec2
+from base import PhysicalObject, Actor
+from bamboo.geom import Vec2, Rect
 
 
 class Character(PhysicalObject):
@@ -15,13 +15,19 @@ class Character(PhysicalObject):
 	CLIMB_UP_RATE = 10.0
 	CLIMB_DOWN_RATE = 20.0
 
+	ATTACK_RATE = 20	# min number of frames allowed between attacks
+
 	TRAIL_LENGTH = 10	# length of the trail
 	TRAIL_DECAY = 0.9	# fractional opacity change per trail sprite
 
 	is_pc = False	# True if this character is a player character
 
+	layer = 2
+
+	MAX_HEALTH = 10
+
 	def __init__(self):
-		super(Character, self).__init__(self)
+		super(Character, self).__init__()
 		self.dir = 'r'
 		self.rotation = 0
 		self.current = None
@@ -29,7 +35,9 @@ class Character(PhysicalObject):
 		self.looking = None		# only used when climbing trees
 		self.crouching = False
 		self.climbing = None
+		self.attack_timer = 0
 		self.climb_rate = 0		# current climb rate (when climbing a tree)
+		self.health = self.MAX_HEALTH
 
 		self.trail = []
 
@@ -44,7 +52,7 @@ class Character(PhysicalObject):
 		else:
 			self.dir = 'r'
 			if self.is_on_ground():
-				self.apply_force(-self.run_speed() * self.ground_normal().perpendicular())
+				self.apply_force(-self.run_speed() * self.runforce * self.ground_normal().perpendicular())
 			else:
 				self.apply_force(self.AIR_ACCEL)
 			self.crouching = False
@@ -134,6 +142,9 @@ class Character(PhysicalObject):
 		pass
 
 	def update(self):
+		if self.attack_timer > 0:
+			self.attack_timer -= 1
+
 		if not self.is_climbing():
 			# update physics
 			super(Character, self).update()
@@ -162,32 +173,132 @@ class Character(PhysicalObject):
 
 		self.trail_batch.draw()
 
+
+	def is_attacking(self):
+		return self.attack_timer > self.ATTACK_RATE
+
+	def can_attack(self):
+		return self.attack_timer == 0
+
+	def attack(self):
+		if not self.can_attack():
+			return
+
+		self.attack_timer = self.ATTACK_RATE + 8
+
+		if self.crouching:
+			c = self.pos + Vec2(0, 72)
+		else:
+			c = self.pos + Vec2(0, 100)
+		dir = self.looking or self.dir
+		if dir == 'r':
+			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(160, 25))
+			force = Vec2(0, 10)
+		else:
+			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(-160, 25))
+			force = Vec2(0, -10)
+
+		victims = [a for a in self.level.characters_colliding(attack_region) if a != self]
+		if not victims:
+			return
+		damage = 10.0 / len(victims)
+		force = force / len(victims)
+		for a in victims: 
+			a.hit(force, damage)
+
+	def delete(self):
+		super(Character, self).delete()
+		if self.climbing:
+			self.climbing.remove_actor(self)
+
+	def dims(self):
+		return 60, 140	
+
+	def bounds(self):
+		w, h = self.dims()
+		return Rect(self.pos.x - w / 2, self.pos.y, w, h)
+
+	def hit(self, force, damage=10):
+		self.health -= damage
+		if self.health <= 0:
+			corpse = self.CORPSE(self)
+			self.level.spawn(corpse, x=self.pos.x, y=self.pos.y)
+			self.on_death() 
+			self.level.kill(self)
+
+	def on_death(self):
+		pass
+
 	def draw(self):
 		if self.TRAIL_LENGTH:
 			self.draw_trail()
 		super(Character, self).draw()
 
 
+class Corpse(PhysicalObject):
+	def __init__(self, character):
+		super(Corpse, self).__init__()
+		self.dir = character.dir
+
+	def on_spawn(self):
+		self.play_animation('dying', directional=True)
+		self.death_timer = 0
+
+	def update(self):
+		super(Corpse, self).update()
+		self.death_timer += 1
+		if self.death_timer < 15:
+			rot = 1 if self.dir == 'l' else -1
+			self.rotation += 0.5 + 0.2 * rot * self.death_timer
+		elif self.death_timer == 15:
+			self.rotation = 0
+			self.play_animation('dead', directional=True)
+		elif self.death_timer == 350:
+			self.level.kill(self)
+		elif self.death_timer > 200:
+			self.pos += Vec2(0,-0.5)
+
+class SamuraiCorpse(Corpse):
+	@classmethod
+	def on_class_load(cls):
+		cls.load_directional_sprite('dying', 'samurai-dying.png', anchor_x='right')
+		cls.load_directional_sprite('dead', 'samurai-dead.png', anchor_x=160, anchor_y=15)
+
 class Samurai(Character):
 	"""Represents a set of graphics"""
+	CORPSE = SamuraiCorpse
 	
 	@classmethod
 	def on_class_load(cls):
 		cls.load_directional_sprite('standing', anchor_x=30)
+		cls.load_directional_sprite('attacking', anchor_x=30)
 		cls.load_directional_sprite('crouching', anchor_x=30)
+		cls.load_directional_sprite('crouching-attacking', anchor_x=30)
 		cls.load_directional_sprite('jumping', anchor_x=50, anchor_y=20)
 		cls.load_directional_sprite('falling', anchor_x=40, anchor_y=20)
 		cls.load_directional_sprite('clinging', anchor_x=72)
 		cls.load_directional_sprite('clinging-lookingout', anchor_x=72)
 		cls.load_directional_sprite('clinging-lookingacross', anchor_x=35)
 		cls.load_directional_sprite('clinging-slidingdown', anchor_x=51)
+		cls.load_directional_sprite('clinging-lookingout-attacking', anchor_x=241)
+		cls.load_directional_sprite('clinging-lookingacross-attacking', anchor_x=35)
 
 		cls.load_sound('jumping')
 		cls.load_animation('running', 'samurai-running%d.png', 6, anchor_x=105)
 		cls.load_animation('climbing', 'samurai-climbing%d.png', 6, anchor_x=60)
 
 	def update_animation(self):
-		if not self.is_climbing():
+		if self.is_attacking():
+			if self.is_climbing():
+				if self.looking != self.dir:
+					self.play_animation('clinging-lookingout-attacking')
+				else:
+					self.play_animation('clinging-lookingacross-attacking')
+			elif self.crouching:
+				self.play_animation('crouching-attacking')
+			else:
+				self.play_animation('attacking')
+		elif not self.is_climbing():
 			if self.crouching:
 				self.play_animation('crouching')
 			elif self.is_on_ground():
@@ -210,7 +321,6 @@ class Samurai(Character):
 					self.play_animation('clinging-lookingout')
 				else:
 					self.play_animation('clinging-lookingacross')
-
 	def on_spawn(self):
 		self.play_animation('standing')
 

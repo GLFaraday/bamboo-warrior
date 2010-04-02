@@ -124,17 +124,18 @@ class BambooWarriorGameState(GameState):
 
 		self.pc = Samurai()
 		self.player = PlayerController(self.pc)
-		self.level.spawn(self.pc, x=60)
+		self.level.spawn(self.pc, x=60, controller=self.player)
 
 		ninja = Ninja()
-		self.level.spawn(ninja, x=1000)
-		self.controllers = [self.player, AIController(ninja)]
+		self.level.spawn(ninja, x=1000, controller=AIController(ninja))
 
 	def update(self, keys):
 		player = self.player
 
 		if keys[key.Z]:
 			player.jump()
+		elif keys[key.X]:
+			player.attack()
 
 		if keys[key.UP]:
 			player.up()
@@ -144,9 +145,6 @@ class BambooWarriorGameState(GameState):
 			player.right()
 		elif keys[key.LEFT]:
 			player.left()
-
-		for c in self.controllers:
-			c.update()
 
 		self.level.update()
 

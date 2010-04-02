@@ -105,3 +105,13 @@ class Rect(object):
 
 	def bottomright(self):
 		return Vec2(self.r, self.b)
+
+	def intersects(self, r):
+		return r.r > self.l and r.l < self.r \
+                	and r.t > self.b and r.b < self.t
+
+	@staticmethod
+	def from_corners(c1, c2):
+		x1, x2 = sorted([c1.x, c2.x])
+		y1, y2 = sorted([c1.y, c2.y])
+		return Rect(x1, y1, x2 - x1, y2 - y1)

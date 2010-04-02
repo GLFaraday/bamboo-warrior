@@ -6,6 +6,7 @@ class AIController(object):
 	def __init__(self, character):
 		self.character = character
 		self.target = None
+		self.attack_timer = 0
 
 	def choose_target(self):
 		"""Returns the nearest player character, or None
@@ -39,7 +40,13 @@ class AIController(object):
 		else:
 			self.character.run_left()
 
+	def on_character_death(self):
+		pass
+
 	def update(self):
+		if self.attack_timer > 0:
+			self.attack_timer -= 1
+
 		if self.target is not None and not self.target.is_alive():
 			self.target = None
 
@@ -50,3 +57,7 @@ class AIController(object):
 			self.target = t
 		if self.range_to_target() > 100:
 			self.run_towards_target()
+		else:
+			if self.attack_timer == 0:
+				self.character.attack()
+				self.attack_timer = 100

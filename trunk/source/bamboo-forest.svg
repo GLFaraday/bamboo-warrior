@@ -360,36 +360,29 @@
     <linearGradient
        y2="1751.3409"
        x2="336"
-       y1="2142.1167"
+       y1="2054.1501"
        x1="336"
-       gradientTransform="matrix(1,0,0,1.0116732,-183.64286,-1351.3061)"
+       gradientTransform="matrix(1,0,0,1.0116732,328.35714,-1351.3061)"
        gradientUnits="userSpaceOnUse"
        id="linearGradient9706"
        xlink:href="#linearGradient9821"
        inkscape:collect="always" />
-    <linearGradient
-       inkscape:collect="always"
-       xlink:href="#linearGradient3595"
-       id="linearGradient9727"
-       gradientUnits="userSpaceOnUse"
-       x1="191.75"
-       y1="206.86218"
-       x2="174.5"
-       y2="207.61218" />
     <filter
        id="filter9981"
        inkscape:label="Darken"
        x="0"
        y="0"
        height="1"
-       width="1">
+       width="1"
+       color-interpolation-filters="sRGB">
       <feColorMatrix
          id="feColorMatrix9983"
          values="0.5 0 0 0 0 0 0.5 0 0 0 0 0 0.5 0 0 0 0 0 1 0 " />
     </filter>
     <filter
        inkscape:collect="always"
-       id="filter10848">
+       id="filter10848"
+       color-interpolation-filters="sRGB">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="3.8792629"
@@ -397,7 +390,8 @@
     </filter>
     <filter
        inkscape:collect="always"
-       id="filter10856">
+       id="filter10856"
+       color-interpolation-filters="sRGB">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="2.5509318"
@@ -405,7 +399,8 @@
     </filter>
     <filter
        inkscape:collect="always"
-       id="filter10864">
+       id="filter10864"
+       color-interpolation-filters="sRGB">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="1.1059268"
@@ -413,22 +408,32 @@
     </filter>
     <filter
        inkscape:collect="always"
-       id="filter11195">
+       id="filter11195"
+       color-interpolation-filters="sRGB">
       <feGaussianBlur
          inkscape:collect="always"
          stdDeviation="7.8322875"
          id="feGaussianBlur11197" />
     </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3595"
+       id="linearGradient13292"
+       gradientUnits="userSpaceOnUse"
+       x1="191.75"
+       y1="206.86218"
+       x2="174.5"
+       y2="207.61218" />
   </defs>
   <sodipodi:namedview
      id="base"
-     pagecolor="#ffffff"
+     pagecolor="#000000"
      bordercolor="#666666"
      borderopacity="1.0"
-     inkscape:pageopacity="0.0"
+     inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="599.35826"
+     inkscape:cx="318.35826"
      inkscape:cy="227.09235"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -454,7 +459,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(175.64285,-346.64789)">
+     transform="translate(-336.35715,-346.64789)">
     <g
        style="display:inline"
        id="g3624"
@@ -466,7 +471,7 @@
          sodipodi:nodetypes="ccccccccc"
          id="rect2816"
          d="m 176.5,177.86218 18,0 c 1.662,0 3,1.338 3,3 -2.03388,17.49153 -3.23957,35.19011 0,54 0,1.662 -1.338,3 -3,3 l -18,0 c -1.662,0 -3,-1.338 -3,-3 3.18845,-15.34082 2.06424,-34.77687 0,-54 0,-1.662 1.338,-3 3,-3 z"
-         style="color:#000000;fill:url(#linearGradient9727);fill-opacity:1;fill-rule:nonzero;stroke:#365017;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         style="color:#000000;fill:url(#linearGradient13292);fill-opacity:1;fill-rule:nonzero;stroke:#365017;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
          id="path2819"
          d="m 174.66422,179.44797 19.25,0"
@@ -1175,7 +1180,7 @@
        id="rect7706"
        width="1024"
        height="512"
-       x="-175.64285"
+       x="336.35715"
        y="346.64789"
        inkscape:export-filename="/home/mauve/dev/bamboo/grabs/concept1.png"
        inkscape:export-xdpi="90"
@@ -3522,5 +3527,29 @@
         </g>
       </g>
     </g>
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g10302"
+       id="use13286"
+       transform="translate(1024,0)"
+       width="1024"
+       height="512" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g10015"
+       id="use13288"
+       transform="translate(1024,0)"
+       width="1024"
+       height="512" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#g10021"
+       id="use13290"
+       transform="translate(1024,0)"
+       width="1024"
+       height="512" />
   </g>
 </svg>

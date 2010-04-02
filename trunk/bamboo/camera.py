@@ -48,7 +48,8 @@ class TrackingCamera(MovingCamera):
 		self.actor = actor
 
 	def update(self):
-		self.move_to(self.actor.pos)
+		if self.actor.is_alive():
+			self.move_to(self.actor.pos)
 
 
 class LevelCamera(MovingCamera):
