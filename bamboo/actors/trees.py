@@ -45,14 +45,12 @@ class Climbable(object):
 
 
 class BambooTree(Actor, Climbable):
-	height = 20
-
 	PIECE_HEIGHT = 64
 	RADIUS = 12.5
 	TEX_PERIOD = 1
-	THINNING = 0.98		# trees get thinner as you go up, by this ratio per segment
+	THINNING = 0.96		# trees get thinner as you go up, by this ratio per segment
 
-	def __init__(self, x=60, height=20, angle=0):
+	def __init__(self, x=60, height=12, angle=0):
 		Climbable.__init__(self)
 		self.height = height
 		self.pos = Vec2(x, 0)

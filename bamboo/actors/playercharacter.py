@@ -6,6 +6,7 @@ class PlayerController(object):
 		self.character = character
 		self.character.is_pc = True
 		self.active = False
+		self.attack_timer = None
 
 	def right(self):
 		self.character.run_right()
@@ -42,8 +43,13 @@ class PlayerController(object):
 		self.character.jump()
 		self.active = True
 
+	def attack(self):
+		self.character.attack()
+
+	def on_character_death(self):
+		pass
+
 	def update(self):
 		if not self.active:
 			self.character.stop()
-		self.character.update()
 		self.active = False

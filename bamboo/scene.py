@@ -29,7 +29,7 @@ class Viewport(object):
 		gl.glPopMatrix(gl.GL_MODELVIEW)
 
 
-class Background(object):
+class InfiniteDistanceBackground(object):
 	def __init__(self, texturename, window):
 		self.texture = pyglet.resource.texture(texturename)
 		self.create_batch(window)
@@ -53,6 +53,26 @@ class Background(object):
 	def draw(self):
 		self.batch.draw()
 
+class ZeroDistanceBackground(object):
+	def __init__(self, texturename, level, scale=2, y=100):
+		self.texture = pyglet.resource.texture(texturename)
+		self.scale = scale
+		self.y = y
+		self.create_batch(level)
+	
+	def create_batch(self, level):
+		self.batch = pyglet.graphics.Batch()
+		self.group = pyglet.sprite.SpriteGroup(self.texture, gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+		tex = self.texture
+		repeats = float(level.width) / (tex.width * self.scale)
+		self.vertexlist = self.batch.add(4, gl.GL_QUADS, self.group,
+			('v2i', [0,self.y, level.width,self.y, level.width,tex.height * self.scale + self.y, 0,tex.height * self.scale + self.y]),
+			('t2f', [0,0, repeats,0, repeats,0.99, 0,0.99])
+		)
+
+	def draw(self):
+		self.batch.draw()
+
 
 class Scene(object):
 	"""Used to manage rendering for a level"""
@@ -61,15 +81,16 @@ class Scene(object):
 		self.window = window
 		self.level = level
 		self.camera = FixedCamera.for_window(self.window)
-		self.background = Background('distant-background.png', window)
-		self.background2 = Background('bamboo-forest.png', window)
+		self.background = InfiniteDistanceBackground('distant-background.png', window)
+		self.background2 = ZeroDistanceBackground('bamboo-forest.png', level)
 		self.batch = pyglet.graphics.Batch()
+		self.fps = pyglet.clock.ClockDisplay()
 
 	def draw(self):
 		viewport = self.camera.get_viewport()
 		self.background.draw()
-		self.background2.draw()
 		viewport.apply_transform()
+		self.background2.draw()
 		# set up matrix for viewport
 		# compute PVS
 		for a in self.level.get_actors():
@@ -79,4 +100,6 @@ class Scene(object):
 		# render PVS
 		# reset matrix
 		viewport.reset_transform()
+		#draw HUD elements
+		self.fps.draw()
 
