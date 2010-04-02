@@ -77,3 +77,7 @@ class Level(object):
 					distance = d
 
 		return nearest, distance
+
+	def find_playercharacters(self):
+		from bamboo.actors.samurai import Character
+		return [a for a in self.actors if isinstance(a, Character) and a.is_pc]

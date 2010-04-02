@@ -7,6 +7,7 @@ from bamboo.geom import Vec2
 class Actor(ResourceTracker):
 	initial_animation = None
 	current = None
+	next = None	# sprite to change to at next frame
 	sprite = None
 
 	level = None
@@ -24,6 +25,15 @@ class Actor(ResourceTracker):
 
 	_pos = Vec2(0, 0)
 	pos = property(_get_pos, _set_pos)
+
+	def is_alive(self):
+		return self.level is not None
+
+	def die(self):
+		self.level.kill(self)
+
+	def distance_to(self, pos):
+		return (pos - self.pos).mag()
 
 	def ground_level(self):
 		try:
@@ -48,16 +58,20 @@ class Actor(ResourceTracker):
 		"""Set the current animation""" 
 		if self.current == name:
 			return
-		self.current = name
-		if self.sprite:
-			self.sprite.delete()
-		self.sprite = pyglet.sprite.Sprite(self.graphics[name], self.pos.x, self.pos.y)
+		self.next = name
 
-	def draw(self):
-		"""Subclasses should implement this method to draw the actor"""	
-		self.sprite.set_position(self.pos.x, self.pos.y)
-		self.sprite.rotation = self.rotation
-		self.sprite.draw() 
+	def update_batch(self, batch):
+		if self.next is not None:
+			if self.sprite:
+				self.sprite.delete()
+			self.sprite = pyglet.sprite.Sprite(self.graphics[self.next], self.pos.x, self.pos.y, batch=batch)
+			self.sprite.rotation = self.rotation
+			self.current = self.next
+			self.next = None
+		else:
+			self.sprite.set_position(self.pos.x, self.pos.y)
+			self.sprite.rotation = self.rotation
+			self.sprite.draw() 
 
 	def update(self):
 		"""Subclasses can implement this method if necessary to implement game logic"""
@@ -70,8 +84,8 @@ class Actor(ResourceTracker):
 
 GRAVITY = Vec2(0, -1.6)
 
-class Character(Actor):
-	"""A character is an actor bound by simple platform physics"""
+class PhysicalObject(Actor):
+	"""A PhysicalObject is an actor bound by simple platform physics"""
 	MASS = 15
 	FRICTION = 0.6
 	LINEAR_DAMPING = 0.0

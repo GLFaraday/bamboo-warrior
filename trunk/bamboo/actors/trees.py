@@ -18,11 +18,15 @@ class Climbable(object):
 
 	def add_actor(self, a):
 		a.climbing = self
-		a.climbing_height = self.height_for_y(a.pos.y)
+		try:
+			a.climbing_height = self.height_for_y(a.pos.y)
+		except ValueError:
+			a.climbing_height = self.height - 2
 		self.actors.append(a)
 
 	def remove_actor(self, a):
 		a.climbing = None
+		a.climb_rate = None
 		self.actors.remove(a)
 
 	def climb_up(self, a, dist=10.0):
@@ -55,7 +59,7 @@ class BambooTree(Actor, Climbable):
 		self.base_angle = angle
 		self.wobble_angle = 0
 		self.wind_phase = 0
-		self.create_sprites()
+		self.batch = None
 
 	def on_spawn(self):
 		self.wind_phase = 0.1 * self.pos.x
@@ -107,12 +111,14 @@ class BambooTree(Actor, Climbable):
 	def get_parent_group(self, parent=None):
 		return parent
 
-	def create_sprites(self, batch=None, parent=None):
-		self.load_resources()
-		if batch:
-			self.batch = batch
+	def update_batch(self, batch, parent=None):
+		if self.batch:
+			self.update_vertexlist()
 		else:
-			self.batch = pyglet.graphics.Batch()
+			self.init_batch(batch, parent)
+			self.batch = batch
+
+	def init_batch(self, batch, parent):
 		self.foliage = {}
 
 		tex = self.textures['piece']
@@ -124,28 +130,36 @@ class BambooTree(Actor, Climbable):
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
 
+		for v in self.compute_wobble():
+			vertices += [v.x, v.y]
+
 		for i in range(self.height + 1):
-			vertices += list(pos - radius)
-			vertices += list(pos + radius)
-			radius *= self.THINNING
 			tex_coords += [tex.tex_coords[0], (i + 1) * self.TEX_PERIOD, tex.tex_coords[3], (i + 1) * self.TEX_PERIOD]
-			pos += step
-			step = step.rotate(da)
-			radius = radius.rotate(da) * self.THINNING
+
+		vertices = vertices[:2] + vertices + vertices[-2:]
+		tex_coords = tex_coords[:2] + tex_coords + tex_coords[-2:]
 
 		parent_group = self.get_parent_group(parent)
 		group = pyglet.sprite.SpriteGroup(self.textures['piece'], GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, parent=parent_group)
-		self.vertex_list = self.batch.add((self.height + 1) * 2, GL_QUAD_STRIP, group, ('v2f', vertices), ('t2f', tex_coords))
+		self.vertex_list = batch.add((self.height + 2) * 2, GL_QUAD_STRIP, group, ('v2f', vertices), ('t2f', tex_coords))
 	
 		for i in range(self.height):
 			prob = self.height - i
 			if random.random() * prob < 1:
 				l = random.choice(['leaf1-l', 'leaf2-l'])
-				self.foliage.setdefault(i, []).append((1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
+				self.foliage.setdefault(i, []).append((1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=batch, group=parent_group)))
 			if random.random() * prob < 1:
 				l = random.choice(['leaf1-r', 'leaf2-r'])
-				self.foliage.setdefault(i, []).append((-1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=self.batch, group=parent_group)))
-		self.foliage.setdefault(self.height, []).append((0, pyglet.sprite.Sprite(self.graphics['top'], batch=self.batch, group=parent_group)))
+				self.foliage.setdefault(i, []).append((-1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=batch, group=parent_group)))
+		self.foliage.setdefault(self.height, []).append((0, pyglet.sprite.Sprite(self.graphics['top'], batch=batch, group=parent_group)))
+
+	def update_vertexlist(self):
+		for i, v in enumerate(self.compute_wobble()):
+			if i == 0:
+				self.set_trunk_vertex(0, v)
+			elif i == self.height * 2 + 1:
+				self.set_trunk_vertex(self.height * 2 + 3, v)
+			self.set_trunk_vertex(i + 1, v)
 
 	def set_trunk_vertex(self, i, v):
 		x, y = v
@@ -166,8 +180,8 @@ class BambooTree(Actor, Climbable):
 			actor_segments.setdefault(h, []).append(a)
 
 		for i in range(self.height + 1):
-			self.set_trunk_vertex(2 * i, pos - radius)
-			self.set_trunk_vertex(2 * i + 1, pos + radius)
+			yield pos - radius
+			yield pos + radius
 			for side, f in self.foliage.get(i, []):
 				p = pos + side * radius
 				f.x = p.x
@@ -227,9 +241,6 @@ class BackgroundBambooTree(BambooTree):
 	@classmethod
 	def on_class_load(cls):
 		cls.load_texture('piece', 'bamboo-piece-blurred.png', anchor_x='center')
-		cls.load_directional_sprite('leaf1', 'bamboo-leaf1.png', anchor_x='right')
-		cls.load_directional_sprite('leaf2', 'bamboo-leaf2.png', anchor_x='right')
-		cls.load_sprite('top', 'bamboo-top.png', anchor_x=77, anchor_y=3)
 
 	def on_spawn(self):
 		self.RADIUS = random.random() ** 0.5 * 10 + 2

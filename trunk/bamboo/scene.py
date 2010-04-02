@@ -63,6 +63,7 @@ class Scene(object):
 		self.camera = FixedCamera.for_window(self.window)
 		self.background = Background('distant-background.png', window)
 		self.background2 = Background('bamboo-forest.png', window)
+		self.batch = pyglet.graphics.Batch()
 
 	def draw(self):
 		viewport = self.camera.get_viewport()
@@ -71,8 +72,9 @@ class Scene(object):
 		viewport.apply_transform()
 		# set up matrix for viewport
 		# compute PVS
-		for l in self.level.get_actors():
-			l.draw()
+		for a in self.level.get_actors():
+			a.update_batch(self.batch)
+		self.batch.draw()	
 		self.level.ground.draw()
 		# render PVS
 		# reset matrix

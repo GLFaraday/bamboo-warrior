@@ -20,20 +20,59 @@ def set_anchor(tex, anchor_x, anchor_y):
 		tex.anchor_y = anchor_y
 
 
+class ResourceDict(dict):
+	def __init__(self, name, parents=[]):
+		self.name = name
+		self.parents = parents
+
+	def __getitem__(self, key):
+		try:
+			return super(ResourceDict, self).__getitem__(key)
+		except KeyError:
+			for p in self.parents:
+				try:
+					return p[key]
+				except KeyError:
+					continue
+		raise KeyError(key)
+
+	def __setitem__(self, key, value):
+		return super(ResourceDict, self).__setitem__(key, value)
+
+	def __iter__(self):
+		ks = set(dict.keys(self))
+		for k in ks:
+			yield ks
+		for p in self.parents:
+			for k in p:
+				if k not in ks:
+					yield k
+					ks.add(k)
+			
+
+
+class ResourceTrackerMeta(type):
+	"""This metaclass makes superclass resources available to subclasses, but ensures subclasses get a new class dictionary"""
+	def __new__(cls, name, bases, attrs):
+		t = type.__new__(cls, name, bases, attrs)
+		t.graphics = ResourceDict(name, [b.graphics for b in bases if hasattr(b, 'graphics')])
+		t.sounds = ResourceDict(name, [b.sounds for b in bases if hasattr(b, 'sounds')])
+		t.textures = ResourceDict(name, [b.textures for b in bases if hasattr(b, 'textures')])
+		return t
+		
+
 class ResourceTracker(object):
 	"""Superclass for objects that want to ensure resources are loaded as they are added to the scene.
 
 	Subclasses implement the class method on_class_load to load the resources.
 	"""
+	__metaclass__ = ResourceTrackerMeta
 
 	_resources_loaded = False
 
-	graphics = {}
-	sounds = {}
-	textures = {}
-
 	@classmethod
 	def load_texture(cls, name, resource=None, anchor_x='center', anchor_y=0):
+		assert name not in cls.textures
 		if resource is None:
 			resource = cls.__name__.lower() + '-' + name + '.png'
 		im = pyglet.resource.texture(resource)
@@ -43,6 +82,7 @@ class ResourceTracker(object):
 
 	@classmethod
 	def load_sprite(cls, name, resource=None, anchor_x='center', anchor_y=0):
+		assert name not in cls.graphics
 		if resource is None:
 			resource = cls.__name__.lower() + '-' + name + '.png'
 		im = pyglet.resource.image(resource)
@@ -51,6 +91,8 @@ class ResourceTracker(object):
 
 	@classmethod
 	def load_directional_sprite(cls, name, resource=None, anchor_x='center', anchor_y=0):
+		assert name + '-l' not in cls.graphics
+		assert name + '-r' not in cls.graphics
 		if resource is None:
 			resource = cls.__name__.lower() + '-' + name + '.png'
 		im = pyglet.resource.image(resource)
@@ -60,12 +102,15 @@ class ResourceTracker(object):
 
 	@classmethod
 	def load_sound(cls, name, resource=None):
+		assert name not in cls.sounds
 		if resource is None:
 			resource = cls.__name__.lower() + '-' + name + '.wav'
 		cls.sounds[name] = pyglet.resource.media(resource, streaming=False)
 
 	@classmethod
 	def load_animation(cls, name, resource, frames, anchor_x='center', anchor_y=0, framerate=0.1):
+		assert name + '-l' not in cls.graphics
+		assert name + '-r' not in cls.graphics
 		if resource is None:
 			resource = cls.__name__.lower() + '-' + name + '%d.png'
 		frame_textures = [pyglet.resource.image(resource % (i + 1)) for i in range(frames)]
