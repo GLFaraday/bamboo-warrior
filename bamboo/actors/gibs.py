@@ -1,3 +1,4 @@
+import random
 from bamboo.actors.base import PhysicalObject
 
 
@@ -11,11 +12,14 @@ class BloodSpray(PhysicalObject):
 		self.dir = 'r' if v.x > 0 else 'l'
 	
 	def on_spawn(self):
-		self.play_animation(self.initial_animation, directional=True)
+		anim = random.choice(['spray-1', 'spray-2', 'spray-3']) 
+		self.play_animation(anim, directional=True)
 
 	@classmethod
 	def on_class_load(cls):
-		cls.load_directional_sprite('spray', 'blood-spray-1.png', anchor_x=0)
+		cls.load_directional_sprite('spray-1', 'blood-spray-1.png', anchor_x=0, anchor_y='center')
+		cls.load_directional_sprite('spray-2', 'blood-spray-2.png', anchor_x=0, anchor_y='center')
+		cls.load_directional_sprite('spray-3', 'blood-spray-3.png', anchor_x=0, anchor_y='center')
 
 	def update(self):
 		if self.is_on_ground():

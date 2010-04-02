@@ -1768,9 +1768,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1"
-     inkscape:cx="3696.3045"
-     inkscape:cy="357.01165"
+     inkscape:zoom="0.25"
+     inkscape:cx="2317.45"
+     inkscape:cy="552.98269"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -1924,75 +1924,48 @@
        y="0"
        x="0" />
     <use
-       height="1"
-       width="1"
-       id="use5186"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(971.71293,908.06055)" />
-    <use
-       height="1"
-       width="1"
-       id="use5188"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(1552.7129,663.06055)" />
-    <use
-       transform="translate(1629.7129,659.06055)"
-       style="display:inline"
-       x="0"
-       y="0"
-       xlink:href="#StandingNinja"
-       id="use5162"
-       width="1"
-       height="1" />
-    <use
-       transform="translate(2057.7129,783.06055)"
-       style="display:inline"
-       x="0"
-       y="0"
-       xlink:href="#StandingNinja"
-       id="use5192"
-       width="1"
-       height="1" />
-    <use
-       transform="translate(3358.7129,951.06055)"
-       style="display:inline"
-       x="0"
-       y="0"
-       xlink:href="#StandingNinja"
-       id="use5194"
-       width="1"
-       height="1" />
-    <use
-       transform="translate(3639.7129,955.06055)"
-       style="display:inline"
-       x="0"
-       y="0"
-       xlink:href="#StandingNinja"
-       id="use5198"
-       width="1"
-       height="1" />
-    <use
-       transform="translate(2862.7129,759.06055)"
-       style="display:inline"
-       x="0"
-       y="0"
-       xlink:href="#StandingNinja"
-       id="use5202"
-       width="1"
-       height="1" />
-    <use
        transform="translate(4088.7129,953.06055)"
        style="display:inline"
        x="0"
        y="0"
        xlink:href="#StandingNinja"
        id="use5204"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(2110.7129,759.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5214"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(1998.7129,775.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5216"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(1710.7129,683.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5218"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(3646.7129,935.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5222"
        width="1"
        height="1" />
   </g>
