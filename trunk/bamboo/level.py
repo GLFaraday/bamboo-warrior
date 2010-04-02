@@ -18,12 +18,18 @@ class ActorSpawn(object):
 		parts = modpath.split('.')
 		classname = parts[-1]
 		modname = '.'.join(parts[:-1])
-		mod = __import__(modname, {}, {}, [classname], -1)
+		mod = __import__(modname, {}, {}, [classname])
 		return getattr(mod, classname)
 		
 	def spawn(self, level):
-		obj = self.get_class()
-		level.spawn(obj(), self.pos.x, self.pos.y)
+		from bamboo.actors.characters import Character
+		from bamboo.actors.aicontroller import AIController
+		obj = self.get_class()()
+		if isinstance(obj, Character):
+			controller = AIController(obj)
+		else:
+			controller = None
+		level.spawn(obj, self.pos.x, self.pos.y, controller)
 
 
 class Level(object):
@@ -90,17 +96,21 @@ class Level(object):
 						a.apply_force(-5 * d * v)
 						b.apply_force(5 * d * v)
 
-	def get_nearest_climbable(self, pos):
-		"""Return the nearest climbable and the distance to that climbable."""
+	def get_climbables(self):
 		from bamboo.actors.trees import Climbable
-		nearest = None
-		distance = None
 		for a in self.actors:
 			if isinstance(a, Climbable) and a.is_climbable():
-				d = a.distance_from(pos)
-				if nearest is None or d < distance:
-					nearest = a
-					distance = d
+				yield a
+
+	def get_nearest_climbable(self, pos):
+		"""Return the nearest climbable and the distance to that climbable."""
+		nearest = None
+		distance = None
+		for a in self.get_climbables():
+			d = a.distance_from(pos)
+			if nearest is None or d < distance:
+				nearest = a
+				distance = d
 
 		return nearest, distance
 

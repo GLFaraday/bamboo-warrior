@@ -147,8 +147,7 @@ class BambooWarriorGameState(GameState):
 			elif keys[key.LEFT]:
 				player.left()
 		else:
-			if keys[key.Z] or keys[key.Z]:
-				self.level.spawn(self.pc, x=60, controller=self.player)
+			self.level.spawn(self.pc, x=60, controller=self.player)
 
 		self.level.update()
 

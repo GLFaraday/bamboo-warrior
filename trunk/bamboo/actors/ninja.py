@@ -1,4 +1,5 @@
-from bamboo.actors.samurai import Character, Corpse
+from bamboo.actors.characters import Character, Corpse
+
 
 class NinjaCorpse(Corpse):
 	@classmethod

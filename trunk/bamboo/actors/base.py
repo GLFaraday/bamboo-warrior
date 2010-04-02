@@ -69,20 +69,18 @@ class Actor(ResourceTracker):
 
 	def update_batch(self, batch):
 		if self.next is not None:
-			if self.sprite:
-				self.sprite.delete()
-			if hasattr(self, 'layer'):
-				group = pyglet.graphics.OrderedGroup(self.layer)
-			else:
-				group = None
-			self.sprite = pyglet.sprite.Sprite(self.graphics[self.next], self.pos.x, self.pos.y, batch=batch, group=group)
-			self.sprite.rotation = self.rotation
+			if not self.sprite:
+				if hasattr(self, 'layer'):
+					group = pyglet.graphics.OrderedGroup(self.layer)
+				else:
+					group = None
+				self.sprite = pyglet.sprite.Sprite(self.graphics[self.next], self.pos.x, self.pos.y, batch=batch, group=group)
+			self.sprite.image = self.graphics[self.next]
 			self.current = self.next
 			self.next = None
-		else:
+		elif self.sprite: 
 			self.sprite.set_position(self.pos.x, self.pos.y)
 			self.sprite.rotation = self.rotation
-			self.sprite.draw() 
 
 	def delete(self):
 		"""Remove from batch"""
