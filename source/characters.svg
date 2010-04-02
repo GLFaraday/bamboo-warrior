@@ -710,6 +710,13 @@
          offset="1"
          id="stop10200-6-6-0-8-5-6-5-5" />
     </linearGradient>
+    <inkscape:perspective
+       id="perspective12377"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -719,8 +726,8 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="7.3447998"
-     inkscape:cy="-448.89928"
+     inkscape:cx="1440.2314"
+     inkscape:cy="-332.46117"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -5315,7 +5322,10 @@
     <g
        transform="translate(2030.4007,-144.00004)"
        id="g8958"
-       style="display:inline">
+       style="display:inline"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-falling.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <path
          sodipodi:nodetypes="ccscssc"
          id="path8960"
@@ -5546,7 +5556,7 @@
     <g
        inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-standing.png"
        transform="translate(1201.75,-8.2500396)"
        id="g9121"
        style="display:inline">
@@ -5646,7 +5656,7 @@
        style="display:inline"
        id="g9343"
        transform="translate(5232.6507,129.74996)"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-climbing1.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <path
@@ -5738,7 +5748,7 @@
     <g
        inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-climbing2.png"
        transform="translate(5417.6507,128.74996)"
        id="g9442"
        style="display:inline">
@@ -5832,7 +5842,7 @@
        style="display:inline"
        id="g9480"
        transform="translate(5607.1507,128.74996)"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-climbing3.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -5928,7 +5938,7 @@
     <g
        inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-climbing4.png"
        transform="translate(5744.1507,128.74996)"
        id="g9527"
        style="display:inline">
@@ -6026,7 +6036,7 @@
        style="display:inline"
        id="g9565"
        transform="translate(5889.1507,128.74996)"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-climbing5.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <g
@@ -6123,7 +6133,7 @@
        style="display:inline"
        id="g9655"
        transform="translate(6272.6507,126.49996)"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-clinging-slidingdown.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <path
@@ -6211,7 +6221,7 @@
     <g
        inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-clinging.png"
        transform="translate(3191.5189,129.76037)"
        id="g9691"
        style="display:inline">
@@ -6509,7 +6519,7 @@
        style="display:inline"
        id="g9971"
        transform="translate(3414.7689,129.76037)"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-clinging-lookingout.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <rect
@@ -6602,7 +6612,7 @@
        style="display:inline"
        id="g10007"
        transform="translate(3957.6507,119.74996)"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-running6.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-clinging-lookingacross.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90">
       <path
@@ -6703,20 +6713,20 @@
            d="m -1329.8286,1355.512 c -0.3408,0.318 -1.3572,-0.3493 -1.3664,-0.34 -0.7842,0.7804 -0.8587,4.411 -0.3416,5.4403 0.6003,1.1948 4.5472,2.4123 5.6365,1.8701 1.6793,-0.8357 1.2288,-5.7639 -0.854,-6.8004 -0.7998,-0.3981 -1.7486,0.086 -2.3913,-0.17 -0.5976,-0.238 0.6477,-0.68 -0.3416,-0.68"
            style="color:#000000;fill:#333333;fill-opacity:1;fill-rule:nonzero;stroke:#1a1a1a;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       </g>
+      <rect
+         transform="matrix(-0.89057848,-0.45482961,-0.45482961,0.89057848,0,0)"
+         y="1815.0946"
+         x="547.1701"
+         height="66.856743"
+         width="3.5"
+         id="rect9975-6"
+         style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#1a1a1a;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </g>
     <path
        id="path11386-8"
        d="m 2687.468,1519.2341 c 1.295,2.7058 4.5051,3.0584 4.5051,3.0584 6.2551,3.5617 4.985,0.8078 6.6156,0.4885 l -1.2565,-4.9419 4.8838,2.0974 -4.159,-5.2159 1.3722,-1.7654 c -1.3794,-2.1116 -4.6325,-0.2889 -6.7963,-0.1773 -2.2494,1.0501 -5.1565,2.0132 -5.1651,6.4561 z"
        style="color:#000000;fill:#e9d7af;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
        sodipodi:nodetypes="ccccccccc" />
-    <rect
-       transform="matrix(-0.89057848,-0.45482961,-0.45482961,0.89057848,0,0)"
-       y="121.6846"
-       x="-3031.8943"
-       height="66.856743"
-       width="3.5"
-       id="rect9975-6"
-       style="color:#000000;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:#1a1a1a;stroke-width:1;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     <g
        inkscape:export-ydpi="90"
        inkscape:export-xdpi="90"
@@ -7481,7 +7491,10 @@
     <g
        transform="translate(1126.4125,-122.5219)"
        id="g11602"
-       style="display:inline">
+       style="display:inline"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/ninja-crouching.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <path
          sodipodi:nodetypes="ccscssc"
          id="path11604"

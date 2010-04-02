@@ -1,27 +1,35 @@
 import pyglet
 
-from base import Character
+from base import PhysicalObject
 from bamboo.geom import Vec2
 
 
-class Samurai(Character):
+class Character(PhysicalObject):
+	"""A character is a humanoid, who can fight, climb trees, etc."""
 	FALL_SPEED = -20		#threshold at which to play falling animation
 	AIR_ACCEL = Vec2(5, 0)
 	GROUND_ACCEL = 10
 	MAX_RUN_SPEED = 15
 	JUMP_IMPULSE = Vec2(0, 28)
 	TREE_JUMP_IMPULSE = Vec2(10, 15)	# rightwards, negate x component for leftwards
+	CLIMB_UP_RATE = 10.0
+	CLIMB_DOWN_RATE = 20.0
+
+	TRAIL_LENGTH = 10	# length of the trail
+	TRAIL_DECAY = 0.9	# fractional opacity change per trail sprite
+
+	is_pc = False	# True if this character is a player character
 
 	def __init__(self):
-		super(Samurai, self).__init__(self)
+		super(Character, self).__init__(self)
 		self.dir = 'r'
 		self.rotation = 0
 		self.current = None
-		self.load_resources()
 
 		self.looking = None		# only used when climbing trees
 		self.crouching = False
 		self.climbing = None
+		self.climb_rate = 0		# current climb rate (when climbing a tree)
 
 		self.trail = []
 
@@ -30,12 +38,9 @@ class Samurai(Character):
 
 	def run_right(self):
 		if self.is_climbing():
-			if self.dir == 'l':
-				self.play_animation('clinging-lookingout')
-			else:
-				self.play_animation('clinging-lookingacross')
 			self.apply_force(Vec2(10, 0))
 			self.looking = 'r'
+			self.climb_rate = 0
 		else:
 			self.dir = 'r'
 			if self.is_on_ground():
@@ -46,12 +51,9 @@ class Samurai(Character):
 
 	def run_left(self):
 		if self.is_climbing():
-			if self.dir == 'r':
-				self.play_animation('clinging-lookingout')
-			else:
-				self.play_animation('clinging-lookingacross')
 			self.apply_force(Vec2(-10, 0))
 			self.looking = 'l'
+			self.climb_rate = 0
 		else:
 			self.dir = 'l'
 			if self.is_on_ground():
@@ -63,47 +65,54 @@ class Samurai(Character):
 	def is_climbing(self):
 		return self.climbing is not None
 
-	def climb_up(self):
-		if not self.is_climbing():
-			tree, distance = self.level.get_nearest_climbable(self.pos)
-			if not tree or distance > 30:
-				return
-			tree.add_actor(self)
-			self.looking = self.dir
-		else:
-			self.climbing.climb_up(self)
+	def climb(self, tree, rate=0):
+		"""Set this character as climbing the given tree."""
+		tree.add_actor(self)
+		self.looking = self.dir
+		self.climb_rate = rate
 
-		self.play_animation('climbing')
+	def nearby_climbable(self):
+		"""Returns the nearest climbable, or None if there is none
+		in "range"."""
+		tree, distance = self.level.get_nearest_climbable(self.pos)
+		if tree and distance < 30:
+			return tree
+
+	def climb_up(self):
+		assert self.is_climbing()
+		self.climbing.climb_up(self, dist=self.CLIMB_UP_RATE)
+		self.climb_rate = self.CLIMB_UP_RATE
 
 	def climb_down(self):
-		if not self.is_climbing():
-			tree, distance = self.level.get_nearest_climbable(self.pos)
-			if not tree or distance > 30:
-				return
-			self.looking = self.dir
-			tree.add_actor(self)
-		else:
-			self.climbing.climb_down(self, dist=20.0)
-
-		self.play_animation('clinging-slidingdown')
+		assert self.is_climbing()
+		self.climbing.climb_down(self, dist=self.CLIMB_DOWN_RATE)
+		self.climb_rate = -self.CLIMB_DOWN_RATE
 
 	def crouch(self):
-		if self.is_on_ground():
-			self.crouching = True
+		assert self.is_on_ground()
+		self.crouching = True
 
 	def stop(self):
 		if self.is_climbing():
-			self.play_animation('clinging')
+			self.climb_rate = 0
 			self.looking = None
 		else:
 			self.crouching = False
+
+	def on_jump(self):
+		pass
+
+	def on_tree_jump(self):
+		self.on_jump()
+
+	def on_spawn(self):
+		pass
 
 	def jump(self):
 		if self.is_on_ground():
 			self.crouching = False
 			self.apply_impulse(self.JUMP_IMPULSE)
-		#	self.play_sound('jumping')
-			self.play_animation('jumping')
+			self.on_jump()
 		elif self.is_climbing():
 			self.climbing.remove_actor(self)
 			if self.looking:
@@ -113,39 +122,55 @@ class Samurai(Character):
 			elif self.looking == 'l':
 				ix, iy = self.TREE_JUMP_IMPULSE
 				self.apply_impulse(Vec2(-ix, iy))
-			self.play_animation('jumping')
-
+			self.on_tree_jump()
 
 	def play_animation(self, name, directional=True):
 		"""Set the current animation""" 
 		if directional:
 			name = name + '-' + self.dir
-		super(Samurai, self).play_animation(name)
+		super(Character, self).play_animation(name)
 
 	def update_animation(self):
-		if not self.is_climbing():
-			if self.crouching:
-				self.play_animation('crouching')
-			elif self.is_on_ground():
-				if self.v.mag() < 0.01:
-					self.play_animation('standing')
-				else:
-					self.play_animation('running')
-			else:
-				if self.v.y <= self.FALL_SPEED:
-					self.play_animation('falling')
+		pass
 
 	def update(self):
 		if not self.is_climbing():
-			super(Samurai, self).update()
+			# update physics
+			super(Character, self).update()
 			self.rotation = 0
 		else:
 			f = self.get_net_force()
 			# TODO: apply force to the tree we're climbing
 		self.update_animation()
 
-	resources_loaded = False
+	def draw_trail(self):
+		if not hasattr(self, 'trail_batch'):
+			self.trail_batch = pyglet.graphics.Batch()
 
+		for s in reversed(self.trail):
+			s.opacity *= self.TRAIL_DECAY
+		
+		# copy sprite
+		s = pyglet.sprite.Sprite(self.sprite.image, *self.sprite.position, batch=self.trail_batch)
+		s.rotation = self.sprite.rotation
+		s.opacity = 128
+		
+		# update trail
+		for f in self.trail[self.TRAIL_LENGTH - 1:]:
+			f.delete()
+		self.trail = [s] + self.trail[:self.TRAIL_LENGTH - 1]
+
+		self.trail_batch.draw()
+
+	def draw(self):
+		if self.TRAIL_LENGTH:
+			self.draw_trail()
+		super(Character, self).draw()
+
+
+class Samurai(Character):
+	"""Represents a set of graphics"""
+	
 	@classmethod
 	def on_class_load(cls):
 		cls.load_directional_sprite('standing', anchor_x=30)
@@ -161,29 +186,34 @@ class Samurai(Character):
 		cls.load_animation('running', 'samurai-running%d.png', 6, anchor_x=105)
 		cls.load_animation('climbing', 'samurai-climbing%d.png', 6, anchor_x=60)
 
+	def update_animation(self):
+		if not self.is_climbing():
+			if self.crouching:
+				self.play_animation('crouching')
+			elif self.is_on_ground():
+				if self.v.mag() < 0.01:
+					self.play_animation('standing')
+				else:
+					self.play_animation('running')
+			else:
+				if self.v.y <= self.FALL_SPEED:
+					self.play_animation('falling')
+		else:
+			if self.climb_rate > 0:
+				self.play_animation('climbing')
+			elif self.climb_rate < 0:
+				self.play_animation('clinging-slidingdown')
+			else:
+				if self.looking is None:
+					self.play_animation('clinging')
+				elif self.looking != self.dir:
+					self.play_animation('clinging-lookingout')
+				else:
+					self.play_animation('clinging-lookingacross')
+
 	def on_spawn(self):
 		self.play_animation('standing')
 
-	def draw_trail(self):
-		if not hasattr(self, 'trail_batch'):
-			self.trail_batch = pyglet.graphics.Batch()
-
-		for s in reversed(self.trail):
-			s.opacity *= 0.9
-		
-		# copy sprite
-		s = pyglet.sprite.Sprite(self.sprite.image, *self.sprite.position, batch=self.trail_batch)
-		s.rotation = self.sprite.rotation
-		s.opacity = 128
-		
-		self.trail_batch.draw()
-
-		# update trail
-		TRAIL_LENGTH = 15
-		for f in self.trail[TRAIL_LENGTH:]:
-			f.delete()
-		self.trail = [s] + self.trail[:TRAIL_LENGTH]
-
-	def draw(self):
-		self.draw_trail()
-		super(Samurai, self).draw()
+	def on_jump(self):
+		#self.play_sound('jumping')
+		self.play_animation('jumping')

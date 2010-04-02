@@ -118,33 +118,38 @@ class BambooWarriorGameState(GameState):
 		music.play()
 
 		from bamboo.actors.samurai import Samurai
-		self.samurai = Samurai()
-		self.level.spawn(self.samurai, x=60)
+		from bamboo.actors.ninja import Ninja
+		from bamboo.actors.playercharacter import PlayerController
+		from bamboo.actors.aicontroller import AIController
+
+		self.pc = Samurai()
+		self.player = PlayerController(self.pc)
+		self.level.spawn(self.pc, x=60)
+
+		ninja = Ninja()
+		self.level.spawn(ninja, x=1000)
+		self.controllers = [self.player, AIController(ninja)]
 
 	def update(self, keys):
-		samurai = self.samurai
+		player = self.player
 
 		if keys[key.Z]:
-			samurai.jump()
+			player.jump()
 
 		if keys[key.UP]:
-			samurai.climb_up()
+			player.up()
 		elif keys[key.DOWN]:
-			if samurai.is_climbing():
-				samurai.climb_down()
-			else:
-				samurai.crouch()
+			player.down()
 		elif keys[key.RIGHT]:
-			samurai.run_right()
+			player.right()
 		elif keys[key.LEFT]:
-			samurai.run_left()
-		else:
-			samurai.stop()
+			player.left()
 
-		samurai.update()
+		for c in self.controllers:
+			c.update()
 
 		self.level.update()
 
 	def draw(self):
-		self.scene.camera.move_to(self.samurai.pos)
+		self.scene.camera.move_to(self.pc.pos)
 		self.scene.draw()
