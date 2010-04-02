@@ -6,7 +6,7 @@ from pyglet.gl import *
 
 from base import Actor
 
-from bamboo.geom import Vec2
+from bamboo.geom import Vec2, Matrix2
 
 
 class Climbable(object):
@@ -117,8 +117,6 @@ class BambooTree(Actor, Climbable):
 			self.batch = batch
 
 	def init_batch(self, batch, parent):
-		self.foliage = {}
-
 		tex = self.textures['piece']
 		vertices = []
 		tex_coords = []
@@ -128,7 +126,7 @@ class BambooTree(Actor, Climbable):
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
 
-		for v in self.compute_wobble():
+		for v in self.tree_vertices():
 			vertices += [v.x, v.y]
 
 		for i in range(self.height + 1):
@@ -141,66 +139,113 @@ class BambooTree(Actor, Climbable):
 		group = pyglet.sprite.SpriteGroup(self.textures['piece'], GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, parent=parent_group)
 		self.vertex_list = batch.add((self.height + 2) * 2, GL_QUAD_STRIP, group, ('v2f', vertices), ('t2f', tex_coords))
 	
+		self.foliage = []
 		for i in range(self.height):
 			prob = self.height - i
 			if random.random() * prob < 1:
 				l = random.choice(['leaf1-l', 'leaf2-l'])
-				self.foliage.setdefault(i, []).append((1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=batch, group=parent_group)))
+				right = pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=batch, group=parent_group)
+			else:
+				right = None
 			if random.random() * prob < 1:
 				l = random.choice(['leaf1-r', 'leaf2-r'])
-				self.foliage.setdefault(i, []).append((-1, pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=batch, group=parent_group)))
-		self.foliage.setdefault(self.height, []).append((0, pyglet.sprite.Sprite(self.graphics['top'], batch=batch, group=parent_group)))
+				left = pyglet.sprite.Sprite(self.graphics[l], x=self.pos.x, y=self.PIECE_HEIGHT * i + self.pos.y, batch=batch, group=parent_group)
+			else:
+				left = None
+			self.foliage.append((left, None, right))
+		top = pyglet.sprite.Sprite(self.graphics['top'], batch=batch, group=parent_group)
+		self.foliage.append((None, top, None))
 
 	def update_vertexlist(self):
-		for i, v in enumerate(self.compute_wobble()):
-			if i == 0:
-				self.set_trunk_vertex(0, v)
-			elif i == self.height * 2 + 1:
-				self.set_trunk_vertex(self.height * 2 + 3, v)
-			self.set_trunk_vertex(i + 1, v)
+#		for i, v in enumerate(self.compute_wobble()):
+#			if i == 0:
+#				self.set_trunk_vertex(0, v)
+#			elif i == self.height * 2 + 1:
+#				self.set_trunk_vertex(self.height * 2 + 3, v)
+#			self.set_trunk_vertex(i + 1, v)
+
+		vertices = []
+		for v in self.compute_wobble():
+			vertices += [v.x, v.y]
+
+		self.vertex_list.vertices = vertices[:2] + vertices + vertices[-2:]
 
 	def set_trunk_vertex(self, i, v):
 		x, y = v
 		self.vertex_list.vertices[i * 2] = x
 		self.vertex_list.vertices[i * 2 + 1] = y
 
-	def compute_wobble(self):
-		"""Generator for the vertex list. Iterate to give a sequence of Vec2 objects"""
+	def tree_vertices(self):
 		da = self.wobble_angle / self.height
 
 		pos = self.pos
-		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
-		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
+		rotation = Matrix2.rotation(da)
+		step = Vec2(0, self.PIECE_HEIGHT)
+		radius = Vec2(self.RADIUS, 0)
+		angle = 0
 
 		actor_segments = {}
 		for a in self.actors:
 			h = int(a.climbing_height)
 			actor_segments.setdefault(h, []).append(a)
 
+		vertices = []
 		for i in range(self.height + 1):
-			yield pos - radius
-			yield pos + radius
-			for side, f in self.foliage.get(i, []):
-				p = pos + side * radius
+			vertices.append(pos - radius)
+			vertices.append(pos + radius)
+
+			pos += step
+			step = rotation * step
+			angle = angle + da
+			radius = (rotation * radius) * self.THINNING
+		return vertices
+
+	def compute_wobble(self):
+		"""Generator for the vertex list. Iterate to give a sequence of Vec2 objects"""
+		da = self.wobble_angle / self.height
+
+		pos = self.pos
+		rotation = Matrix2.rotation(da)
+		step = Vec2(0, self.PIECE_HEIGHT)
+		radius = Vec2(self.RADIUS, 0)
+		angle = 0
+
+		steprotation = -da * 180 / math.pi
+
+		actor_segments = {}
+		for a in self.actors:
+			h = int(a.climbing_height)
+			actor_segments.setdefault(h, []).append(a)
+
+		vertices = []
+		for i in range(self.height + 1):
+			vertices.append(pos - radius)
+			vertices.append(pos + radius)
+			for side, f in enumerate(self.foliage[i]):
+				if f is None:
+					continue
+				p = pos + (side - 1) * radius
 				f.x = p.x
 				f.y = p.y
-				f.rotation = -radius.angle_in_degrees()
+				f.rotation = angle
 
 			for a in actor_segments.get(i, []):
 				h = a.climbing_height - i
 				apos = pos + h * step
 				a.v = apos - a.pos
 				a.pos = apos
-				a.rotation = -radius.angle_in_degrees()
+				a.rotation = angle
 
 			pos += step
-			step = step.rotate(da)
-			radius = radius.rotate(da) * self.THINNING
+			step = rotation * step
+			angle += steprotation
+			radius = (rotation * radius) * self.THINNING
+		return vertices
 
 	def update(self):
 		self.wind_phase += 1.0 / self.height
 		self.wobble_angle = 0.4 * math.sin(self.wind_phase) + 0.2 * math.sin(self.wind_phase * 0.21) 
-		self.compute_wobble()
+		#self.compute_wobble()
 
 	def draw(self):
 		self.batch.draw()

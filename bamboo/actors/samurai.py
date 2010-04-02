@@ -3,14 +3,16 @@ import pyglet
 from base import PhysicalObject, Actor
 from bamboo.geom import Vec2, Rect
 
+from bamboo.actors.gibs import BloodSpray
+
 
 class Character(PhysicalObject):
 	"""A character is a humanoid, who can fight, climb trees, etc."""
 	FALL_SPEED = -20		#threshold at which to play falling animation
 	AIR_ACCEL = Vec2(5, 0)
-	GROUND_ACCEL = 10
-	MAX_RUN_SPEED = 15
-	JUMP_IMPULSE = Vec2(0, 28)
+	GROUND_ACCEL = 15
+	MAX_RUN_SPEED = 20
+	JUMP_IMPULSE = Vec2(0, 30)
 	TREE_JUMP_IMPULSE = Vec2(10, 15)	# rightwards, negate x component for leftwards
 	CLIMB_UP_RATE = 10.0
 	CLIMB_DOWN_RATE = 20.0
@@ -21,6 +23,8 @@ class Character(PhysicalObject):
 	TRAIL_DECAY = 0.9	# fractional opacity change per trail sprite
 
 	is_pc = False	# True if this character is a player character
+
+	collision_mask = 0x01
 
 	layer = 2
 
@@ -184,7 +188,7 @@ class Character(PhysicalObject):
 		if not self.can_attack():
 			return
 
-		self.attack_timer = self.ATTACK_RATE + 8
+		self.attack_timer = self.ATTACK_RATE + 3
 
 		if self.crouching:
 			c = self.pos + Vec2(0, 72)
@@ -192,11 +196,11 @@ class Character(PhysicalObject):
 			c = self.pos + Vec2(0, 100)
 		dir = self.looking or self.dir
 		if dir == 'r':
-			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(160, 25))
-			force = Vec2(0, 10)
+			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(180, 25))
+			force = Vec2(10, 0) + self.v
 		else:
-			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(-160, 25))
-			force = Vec2(0, -10)
+			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(-180, 25))
+			force = Vec2(-10, 0) + self.v
 
 		victims = [a for a in self.level.characters_colliding(attack_region) if a != self]
 		if not victims:
@@ -204,7 +208,8 @@ class Character(PhysicalObject):
 		damage = 10.0 / len(victims)
 		force = force / len(victims)
 		for a in victims: 
-			a.hit(force, damage)
+			point = attack_region.intersection(a.bounds()).center()
+			a.hit(point, force, damage)
 
 	def delete(self):
 		super(Character, self).delete()
@@ -218,7 +223,8 @@ class Character(PhysicalObject):
 		w, h = self.dims()
 		return Rect(self.pos.x - w / 2, self.pos.y, w, h)
 
-	def hit(self, force, damage=10):
+	def hit(self, point, force, damage=10):
+		self.level.spawn(BloodSpray(v=force), x=point.x, y=point.y)
 		self.health -= damage
 		if self.health <= 0:
 			corpse = self.CORPSE(self)
@@ -245,11 +251,12 @@ class Corpse(PhysicalObject):
 		self.death_timer = 0
 
 	def update(self):
-		super(Corpse, self).update()
+		if self.death_timer < 200:
+			super(Corpse, self).update()
 		self.death_timer += 1
 		if self.death_timer < 15:
 			rot = 1 if self.dir == 'l' else -1
-			self.rotation += 0.5 + 0.2 * rot * self.death_timer
+			self.rotation = min(60, self.rotation + 0.6 + 0.3 * rot * self.death_timer)
 		elif self.death_timer == 15:
 			self.rotation = 0
 			self.play_animation('dead', directional=True)
@@ -261,8 +268,9 @@ class Corpse(PhysicalObject):
 class SamuraiCorpse(Corpse):
 	@classmethod
 	def on_class_load(cls):
-		cls.load_directional_sprite('dying', 'samurai-dying.png', anchor_x='right')
+		cls.load_directional_sprite('dying', 'samurai-dying.png', anchor_x=125)
 		cls.load_directional_sprite('dead', 'samurai-dead.png', anchor_x=160, anchor_y=15)
+
 
 class Samurai(Character):
 	"""Represents a set of graphics"""

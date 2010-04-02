@@ -10,6 +10,9 @@ class Actor(ResourceTracker):
 	next = None	# sprite to change to at next frame
 	sprite = None
 
+	controller = None
+	collision_mask = 0x00
+
 	level = None
 	rotation = 0
 
@@ -85,6 +88,7 @@ class Actor(ResourceTracker):
 		"""Remove from batch"""
 		if self.sprite:
 			self.sprite.delete()
+			self.sprite = None
 
 	def update(self):
 		"""Subclasses can implement this method if necessary to implement game logic"""
@@ -95,7 +99,7 @@ class Actor(ResourceTracker):
 			self.play_animation(self.initial_animation)
 
 
-GRAVITY = Vec2(0, -1.6)
+GRAVITY = Vec2(0, -2.3)
 
 class PhysicalObject(Actor):
 	"""A PhysicalObject is an actor bound by simple platform physics"""

@@ -40,7 +40,11 @@ class Vec2(object):
 		yield self.y
 
 	def mag(self):
-		return (self.x * self.x + self.y * self.y) ** 0.5
+		try:
+			return self._mag
+		except AttributeError:
+			self._mag = (self.x ** 2  + self.y ** 2) ** 0.5
+			return self._mag
 
 	def normalized(self):
 		# check for mag smaller than a threshold to eliminate a class of numerical error problems
@@ -78,6 +82,24 @@ class Vec2(object):
 		return Vec2(-self.y, self.x)
 
 
+class Matrix2(object):
+	def __init__(self, x11, x12, x21, x22):
+		self.x11 = x11
+		self.x12 = x12
+		self.x21 = x21
+		self.x22 = x22
+	
+	def __mul__(self, vec):
+		return Vec2(self.x11 * vec.x + self.x12 * vec.y, self.x21 * vec.x + self.x22 * vec.y)
+
+	@staticmethod
+	def rotation(angle):
+		sin = math.sin(angle)
+		cos = math.cos(angle)
+		return Matrix2(cos, -sin, sin, cos)
+		
+
+
 class Rect(object):
 	"""An axis-aligned rectangle"""
 	def __init__(self, l, b, w, h):
@@ -106,9 +128,24 @@ class Rect(object):
 	def bottomright(self):
 		return Vec2(self.r, self.b)
 
+	def center(self):
+		return Vec2(self.l + self.w * 0.5, self.b + self.h * 0.5)
+
 	def intersects(self, r):
 		return r.r > self.l and r.l < self.r \
                 	and r.t > self.b and r.b < self.t
+
+	def __nonzero__(self):
+		return bool(self.w or self.h)
+
+	def intersection(self, r):
+		if not self.intersects(r):
+			return None
+		xs = [self.l, self.r, r.l, r.r]
+		ys = [self.b, self.t, r.b, r.t]
+		xs.sort()
+		ys.sort()
+		return Rect(xs[1], ys[1], xs[2] - xs[1], ys[2] - ys[1])
 
 	@staticmethod
 	def from_corners(c1, c2):
