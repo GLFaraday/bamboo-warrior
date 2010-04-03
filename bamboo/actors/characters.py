@@ -274,7 +274,8 @@ class Character(PhysicalObject):
 		for s in range(4):
 			off = Vec2(random.random() * 20 - 10, random.random() * 10 - 5) 
 			self.level.spawn(BloodSpray(v=force + off), x=point.x, y=point.y)
-		self.apply_impulse(force / self.MASS)
+		if not self.is_climbing():
+			self.apply_impulse(force / self.MASS)
 		self.health -= damage
 		if self.health <= 0:
 			self.create_corpse()

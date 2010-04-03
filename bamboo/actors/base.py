@@ -15,6 +15,8 @@ class Actor(ResourceTracker):
 
 	level = None
 	rotation = 0
+	scale = 1.0
+	opacity = 255
 
 	dir = 'r'
 
@@ -94,12 +96,21 @@ class Actor(ResourceTracker):
 			group = self.parent_group()
 			if not self.sprite:
 				self.sprite = pyglet.sprite.Sprite(self.graphics[self.next], self.pos.x, self.pos.y, batch=batch, group=group)
+				self.sprite.opacity = self.opacity
+				self.sprite._scale = self.scale
+				self.sprite._update_position()
 			self.sprite.image = self.graphics[self.next]
 			self.current = self.next
 			self.next = None
 		elif self.sprite: 
-			self.sprite.set_position(self.pos.x, self.pos.y)
-			self.sprite.rotation = self.rotation
+			# pyglet regenerates the position whenever any property is set
+			# accessing the internal properties directly, and then updating, is faster
+			self.sprite._rotation = self.rotation
+			self.sprite._x = self.pos.x
+			self.sprite._y = self.pos.y
+			self.sprite._scale = self.scale
+			self.sprite._update_position()
+			self.sprite.opacity = self.opacity
 
 	def delete(self):
 		"""Remove from batch"""

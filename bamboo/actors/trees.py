@@ -66,6 +66,7 @@ class BambooTree(Actor, Climbable):
 		"""Estimate the distance from x, y to this tree. This only works for small wobbly angles."""
 		da = self.wobble_angle / self.height
 
+		rotation = Matrix2.rotation(da)
 		pos = self.pos
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
@@ -77,7 +78,7 @@ class BambooTree(Actor, Climbable):
 			if pos.y > p.y:
 				return abs(pos.x - p.x)
 			pos += step
-			step.rotate(da)	
+			step = rotation * step
 		
 		return (p - pos).mag()
 
@@ -85,6 +86,7 @@ class BambooTree(Actor, Climbable):
 		"""Estimate the height in this tree for a coordinate of y. This only works for small wobble angles."""
 		da = self.wobble_angle / self.height
 
+		rotation = Matrix2.rotation(da)
 		pos = self.pos
 		step = Vec2(0, self.PIECE_HEIGHT).rotate(self.base_angle)
 		radius = Vec2(self.RADIUS, 0).rotate(self.base_angle)
@@ -96,7 +98,7 @@ class BambooTree(Actor, Climbable):
 			if next.y >= y:
 				return i + float(y - pos.y) / step.y
 			pos += step
-			step.rotate(da)	
+			step = rotation * step
 		raise ValueError("Tree does not reach a height of %f." % y)
 
 	@classmethod

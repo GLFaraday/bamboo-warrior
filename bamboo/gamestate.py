@@ -53,9 +53,9 @@ class BambooWarriorGameState(GameState):
 
 	def next_level(self):
 		self.start_level(self.levels.pop(0))
-		self.start()
+		self.start(self.pc)
 
-	def start(self):
+	def start(self, pc=None):
 		"""Start is called when the gamestate is initialised"""
 		#music = pyglet.resource.media('shika-no-toone.ogg')
 		#music.play()
@@ -65,7 +65,12 @@ class BambooWarriorGameState(GameState):
 		from bamboo.actors.playercharacter import PlayerController
 		from bamboo.actors.aicontroller import AIController
 
+		self.huds = []
 		self.pc = Samurai()
+		if pc is not None:
+			self.pc.health = pc.health
+			self.pc.lives = pc.lives
+			
 		self.player = PlayerController(self.pc)
 		self.pc.lives = 4
 		self.spawn_player()

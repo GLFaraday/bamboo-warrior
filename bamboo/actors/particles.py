@@ -39,12 +39,7 @@ class Smoke(Actor):
 		self.pos += self.v
 		self.rotation += self.spin
 		self.scale += 0.02
-
-	def update_batch(self, batch):
-		super(Smoke, self).update_batch(batch)
-		if self.sprite:
-			self.sprite.scale = self.scale
-			self.sprite.opacity = 255 - (self.time / float(self.lifetime)) * 255
+		self.opacity = 255 - (self.time / float(self.lifetime)) * 255
 
 
 def create_puff_of_smoke(rect, level):
