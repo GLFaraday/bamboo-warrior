@@ -87,7 +87,7 @@ class Level(object):
 		for a in self.actors:
 			if isinstance(a, Character):
 				if a.pos.x < 0:
-					a.pos = Vec2(0, a.pos.x)
+					a.pos = Vec2(0, a.pos.y)
 				elif a.pos > self.width:
 					# TODO: fire level completion event
 					pass

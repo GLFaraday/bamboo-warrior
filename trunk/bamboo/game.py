@@ -18,6 +18,11 @@ class Game(object):
 		self.init_events()
 		self.gamestate = GameState()
 
+		if options.showfps:
+			self.fps = pyglet.clock.ClockDisplay()
+		else:
+			self.fps = None
+
 	def init_resources(self):
 		pyglet.resource.path = ['resources/sprites', 'resources/textures', 'resources/music', 'resources/sounds', 'resources/levels']
 		pyglet.resource.reindex()
@@ -73,6 +78,8 @@ class Game(object):
 	def draw(self):
 		"""Draw the scene, or delegate to something that will"""
 		self.gamestate.draw()
+		if self.fps:
+			self.fps.draw()
 	
 	def run(self):
 		pyglet.clock.schedule_interval(self.update, (1.0/32.0))
