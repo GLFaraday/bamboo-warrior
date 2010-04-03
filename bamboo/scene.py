@@ -96,7 +96,6 @@ class Scene(object):
 		self.background3 = NearBackground('bamboo-forest.png', level, depth=0.4, y=-150)
 		self.trees_batch = pyglet.graphics.Batch()
 		self.batch = pyglet.graphics.Batch()
-		self.fps = pyglet.clock.ClockDisplay()
 
 	def update(self):
 		from bamboo.actors.trees import BambooTree
@@ -143,5 +142,4 @@ class Scene(object):
 		# reset matrix
 		viewport.reset_transform()
 		#draw HUD elements
-		self.fps.draw()
 
