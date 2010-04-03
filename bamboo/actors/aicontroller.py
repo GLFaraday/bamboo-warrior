@@ -60,10 +60,7 @@ class AIController(object):
 		if self.attack_timer > 0:
 			self.attack_timer -= 1
 
-		if self.target is not None and not self.target.is_alive():
-			self.target = None
-
-		if not self.target:
+		if not self.target or not self.target.is_alive():
 			t = self.choose_target()
 			if not t:
 				return
