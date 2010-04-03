@@ -5,6 +5,7 @@ class ActorSpawn(object):
 		'BambooTree': 'bamboo.actors.trees.BambooTree',
 		'Torii': 'bamboo.actors.scenery.Torii',
 		'EatingSamurai': 'bamboo.actors.scenery.EatingSamurai',
+		'Campfire': 'bamboo.actors.scenery.Campfire',
 		'StandingNinja': 'bamboo.actors.ninja.Ninja',
 	}
 
@@ -73,6 +74,15 @@ class Level(object):
 
 	def get_actors(self):
 		return self.actors[:]
+
+	def update_scenery(self):
+		"""Update only scenery objects - for menus"""
+		from bamboo.actors.scenery import Campfire
+		from bamboo.actors.particles import Smoke
+		self.ground.update()
+		for a in self.actors:
+			if isinstance(a, Campfire) or isinstance(a, Smoke):
+				a.update() 
 
 	def update(self):
 		"""Run physics, update everything in the world"""

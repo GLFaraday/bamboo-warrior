@@ -87,8 +87,11 @@ class Samurai(Character):
 				else:
 					self.play_animation('clinging-lookingacross')
 	def on_spawn(self):
+		from bamboo.actors.particles import create_puff_of_smoke
 		self.health = self.MAX_HEALTH
 		self.play_animation('standing')
+		bounds = self.bounds()
+		create_puff_of_smoke(bounds, self.level)
 
 	def on_jump(self):
 		#self.play_sound('jumping')
