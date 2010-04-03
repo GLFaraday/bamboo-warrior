@@ -81,7 +81,7 @@ class Character(PhysicalObject):
 	def climb(self, tree, rate=0):
 		"""Set this character as climbing the given tree."""
 		tree.add_actor(self)
-		self.looking = self.dir
+		self.looking = None
 		self.climb_rate = rate
 
 	def nearby_climbable(self):
@@ -178,6 +178,8 @@ class Character(PhysicalObject):
 
 		self.trail_batch.draw()
 
+	def is_running(self):
+		return self.is_on_ground() and self.v.mag() > 1
 
 	def is_attacking(self):
 		return self.attack_timer > self.ATTACK_RATE
@@ -191,10 +193,20 @@ class Character(PhysicalObject):
 
 		self.attack_timer = self.ATTACK_RATE + 3
 
-		if self.crouching:
-			c = self.pos + Vec2(0, 72)
+		off = 0
+		if self.is_climbing():
+			if self.dir == 'r':
+				off = -30
+			else:
+				off = +30
+			if self.dir != self.looking:
+				off *= 1.2
+			c = self.pos + Vec2(off, 60)
+		elif self.crouching:
+			c = self.pos + Vec2(off, 72)
 		else:
-			c = self.pos + Vec2(0, 100)
+			c = self.pos + Vec2(off, 100)
+
 		dir = self.looking or self.dir
 		if dir == 'r':
 			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(180, 25))
@@ -218,11 +230,32 @@ class Character(PhysicalObject):
 			self.climbing.remove_actor(self)
 
 	def dims(self):
-		return 60, 140	
+		if self.is_running():
+			return 76, 130
+		elif self.is_climbing():
+			if self.looking == self.dir:
+				return 50, 130
+			else:
+				return 80, 130
+		elif not self.is_on_ground():
+			return 80, 130
+		else:
+			return 60, 150
 
 	def bounds(self):
-		w, h = self.dims()
-		return Rect(self.pos.x - w / 2, self.pos.y, w, h)
+		if self.is_climbing():
+			w, h = self.dims()
+			if self.looking == self.dir:
+				off = 0
+			else:
+				if self.dir == 'r':
+					off = -40
+				else:
+					off = +40
+			return Rect(self.pos.x - w / 2 + off, self.pos.y, w, h)
+		else:
+			w, h = self.dims()
+			return Rect(self.pos.x - w / 2, self.pos.y, w, h)
 
 	def create_corpse(self):
 		corpse = self.CORPSE(self)

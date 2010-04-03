@@ -100,18 +100,35 @@ class Scene(object):
 		for a in self.level.get_actors():
 			a.update_batch(self.batch)
 
+	def draw_bboxes(self):
+		gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE)
+		vs = []
+		for a in self.level.get_actors():
+			if hasattr(a, 'bounds'):
+				vs += a.bounds().vertices()
+		pyglet.graphics.draw(len(vs) // 2, gl.GL_QUADS, ('v2f', vs))
+		gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL)
+
 	def draw(self):
 		viewport = self.camera.get_viewport()
 
+		# draw infinite background
 		self.background.draw()
+
+		# set up matrix for viewport
 		viewport.apply_transform()
+
+		# draw parallax backgrounds
 		self.background3.draw(viewport)
 		self.background2.draw(viewport)
-		# set up matrix for viewport
-		# compute PVS
+
+		# TODO: compute PVS
 		self.batch.draw()	
 		self.level.ground.draw()
-		# render PVS
+
+		# for testing
+		#self.draw_bboxes()
+
 		# reset matrix
 		viewport.reset_transform()
 		#draw HUD elements

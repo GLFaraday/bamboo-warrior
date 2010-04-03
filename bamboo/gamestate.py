@@ -69,6 +69,7 @@ class BambooWarriorGameState(GameState):
 			elif keys[key.LEFT]:
 				player.left()
 		else:
+			self.pc.v = Vec2(0,0)
 			self.level.spawn(self.pc, x=60, controller=self.player)
 
 		self.level.update()
@@ -112,10 +113,12 @@ class MultiplayerGameState(BambooWarriorGameState):
 		self.spawn_p2()
 
 	def spawn_p1(self):
+		self.pc1.v = Vec2(0,0)
 		self.level.spawn(self.pc1, x=60, controller=self.player1)
 
 	def spawn_p2(self):
 		self.pc2.dir = 'l'
+		self.pc2.v = Vec2(0,0)
 		self.level.spawn(self.pc2, x=self.level.width - 60, controller=self.player2)
 
 	def update(self, keys):

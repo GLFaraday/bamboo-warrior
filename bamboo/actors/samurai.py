@@ -67,7 +67,7 @@ class Samurai(Character):
 			if self.crouching:
 				self.play_animation('crouching')
 			elif self.is_on_ground():
-				if self.v.mag() < 0.01:
+				if not self.is_running():
 					self.play_animation('standing')
 				else:
 					self.play_animation('running')
