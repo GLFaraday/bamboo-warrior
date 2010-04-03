@@ -1,3 +1,5 @@
+import pyglet
+
 from bamboo.geom import Vec2
 from pyglet.window import key
 
@@ -26,15 +28,18 @@ class BambooWarriorGameState(GameState):
 		self.game = game
 		self.start_level(level)
 
+	def get_camera(self):
+		from bamboo import camera
+		return camera.LeadingCamera.for_window(self.scene.window, level=self.level)
+
 	def start_level(self, level):
 		from bamboo.levelloader import SVGLevelLoader
 		from bamboo.scene import Scene
-		from bamboo.camera import LevelCamera
 
 		loader = SVGLevelLoader()
 		self.level = loader.load(level)
 		self.scene = Scene(self.game.window, self.level)
-		self.scene.camera = LevelCamera.for_window(self.scene.window, level=self.level)
+		self.scene.camera = self.get_camera()
 		self.level.restart()
 
 	def start(self):
@@ -49,6 +54,14 @@ class BambooWarriorGameState(GameState):
 
 		self.pc = Samurai()
 		self.player = PlayerController(self.pc)
+		self.spawn_player()
+		self.pc.add_death_listener(self.on_player_death)
+		
+	def on_player_death(self, player):
+		pyglet.clock.schedule_once(self.spawn_player, 3)
+
+	def spawn_player(self, *args):
+		self.pc.v = Vec2(0,0)
 		self.level.spawn(self.pc, x=60, controller=self.player)
 
 	def update(self, keys):
@@ -68,15 +81,14 @@ class BambooWarriorGameState(GameState):
 				player.right()
 			elif keys[key.LEFT]:
 				player.left()
-		else:
-			self.pc.v = Vec2(0,0)
-			self.level.spawn(self.pc, x=60, controller=self.player)
+
+			self.scene.camera.track(self.pc.pos)
 
 		self.level.update()
 
 	def draw(self):
 		self.scene.update()
-		self.scene.camera.move_to(self.pc.pos)
+		self.scene.camera.update()
 		self.scene.draw()
 
 
@@ -99,6 +111,10 @@ class StaticLevelGameState(BambooWarriorGameState):
 class MultiplayerGameState(BambooWarriorGameState):
 	def __init__(self, game, level='arena.svg'):
 		super(MultiplayerGameState, self).__init__(game, level)
+
+	def get_camera(self):
+		from bamboo import camera
+		return camera.DualTrackingCamera.for_window(self.scene.window, level=self.level)
 
 	def start(self):
 		"""Start is called when the gamestate is initialised"""
@@ -158,10 +174,16 @@ class MultiplayerGameState(BambooWarriorGameState):
 		else:
 			self.spawn_p2()
 
+		if self.pc1.is_alive() and self.pc2.is_alive():
+			self.scene.camera.track_both(self.pc1.pos, self.pc2.pos)
+		elif self.pc1.is_alive():
+			self.scene.camera.track(self.pc1.pos)
+		elif self.pc2.is_alive():
+			self.scene.camera.track(self.pc2.pos)
+
 		self.level.update()
 
 	def draw(self):
 		self.scene.update()
-		# TODO: multitrackingcamera
-		self.scene.camera.move_to(Vec2(self.level.width // 2, 60))
+		self.scene.camera.update()
 		self.scene.draw()

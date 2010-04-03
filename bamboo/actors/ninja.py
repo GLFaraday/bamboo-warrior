@@ -72,6 +72,7 @@ class Ninja(Character):
 					self.play_animation('clinging-lookingacross')
 
 	def on_spawn(self):
+		self.health = self.MAX_HEALTH
 		self.play_animation('standing')
 
 	def on_jump(self):

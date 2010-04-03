@@ -45,12 +45,12 @@ class Climbable(object):
 
 
 class BambooTree(Actor, Climbable):
-	PIECE_HEIGHT = 64
+	PIECE_HEIGHT = 96
 	RADIUS = 12.5
-	TEX_PERIOD = 1
-	THINNING = 0.96		# trees get thinner as you go up, by this ratio per segment
+	TEX_PERIOD = 1.5
+	THINNING = 0.96 ** TEX_PERIOD		# trees get thinner as you go up, by this ratio per segment
 
-	def __init__(self, x=60, height=12, angle=0):
+	def __init__(self, x=60, height=9, angle=0):
 		Climbable.__init__(self)
 		self.height = height
 		self.pos = Vec2(x, 0)
@@ -137,7 +137,7 @@ class BambooTree(Actor, Climbable):
 
 		parent_group = self.get_parent_group(parent)
 		group = pyglet.sprite.SpriteGroup(self.textures['piece'], GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, parent=parent_group)
-		self.vertex_list = batch.add((self.height + 2) * 2, GL_QUAD_STRIP, group, ('v2f', vertices), ('t2f', tex_coords))
+		self.vertex_list = batch.add((self.height + 2) * 2, GL_QUAD_STRIP, group, ('v2f/stream', vertices), ('t2f/static', tex_coords))
 	
 		self.foliage = []
 		for i in range(self.height):
