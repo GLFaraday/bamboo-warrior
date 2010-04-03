@@ -13,6 +13,8 @@ class Ninja(Character):
 	TRAIL_LENGTH = 2
 	TRAIL_DECAY = 0.7
 
+	MAX_HEALTH = 20
+
 	CORPSE = NinjaCorpse
 	
 	@classmethod

@@ -1769,7 +1769,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.25"
-     inkscape:cx="2317.45"
+     inkscape:cx="3597.45"
      inkscape:cy="552.98269"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
@@ -1852,19 +1852,11 @@
     <use
        height="1052.36"
        width="6000"
-       transform="translate(1591,664.99784)"
+       transform="translate(1663,664.99784)"
        id="use16079"
        xlink:href="#BambooTree"
        y="0"
        x="0" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#BambooTree"
-       id="use16083"
-       transform="translate(1790,731.99784)"
-       width="6000"
-       height="1052.36" />
     <use
        style="display:inline"
        x="0"
@@ -1888,7 +1880,7 @@
        y="0"
        xlink:href="#BambooTree"
        id="use12783"
-       transform="translate(1931.4214,780.0811)"
+       transform="translate(2003.4214,780.0811)"
        width="6000"
        height="1052.36" />
     <use
@@ -1902,7 +1894,7 @@
     <use
        height="1052.36"
        width="6000"
-       transform="translate(3854.7519,952.61515)"
+       transform="translate(3626.7519,952.61515)"
        id="use12793"
        xlink:href="#BambooTree"
        y="0"
@@ -1918,7 +1910,7 @@
     <use
        height="1052.36"
        width="6000"
-       transform="translate(2273.661,768.76739)"
+       transform="translate(2345.661,776.76739)"
        id="use12781"
        xlink:href="#BambooTree"
        y="0"
@@ -1933,7 +1925,7 @@
        width="1"
        height="1" />
     <use
-       transform="translate(2110.7129,759.06055)"
+       transform="translate(2182.7129,759.06055)"
        style="display:inline"
        x="0"
        y="0"
@@ -1942,7 +1934,7 @@
        width="1"
        height="1" />
     <use
-       transform="translate(1998.7129,775.06055)"
+       transform="translate(2070.7129,775.06055)"
        style="display:inline"
        x="0"
        y="0"
@@ -1951,7 +1943,7 @@
        width="1"
        height="1" />
     <use
-       transform="translate(1710.7129,683.06055)"
+       transform="translate(1782.7129,683.06055)"
        style="display:inline"
        x="0"
        y="0"

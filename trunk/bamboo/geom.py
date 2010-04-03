@@ -43,7 +43,7 @@ class Vec2(object):
 		try:
 			return self._mag
 		except AttributeError:
-			self._mag = (self.x ** 2  + self.y ** 2) ** 0.5
+			self._mag = math.sqrt(self.x * self.x  + self.y * self.y)
 			return self._mag
 
 	def normalized(self):

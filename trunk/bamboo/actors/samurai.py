@@ -11,6 +11,7 @@ class SamuraiCorpse(Corpse):
 class Samurai(Character):
 	"""Represents a set of graphics"""
 	CORPSE = SamuraiCorpse
+	MAX_HEALTH = 30
 	
 	@classmethod
 	def on_class_load(cls):
