@@ -31,10 +31,28 @@ class Actor(ResourceTracker):
 	_pos = Vec2(0, 0)
 	pos = property(_get_pos, _set_pos)
 
+	def add_death_listener(self, callback):
+		try:
+			self.death_listeners.add(callback)
+		except AttributeError:
+			self.death_listeners = set([callback])
+
+	def remove_death_listener(self, callback):
+		try:
+			self.death_listeners.remove(callback)
+		except AttributeError, KeyError:
+			pass
+
+	def fire_death_event(self):
+		if hasattr(self, 'death_listeners'):
+			for l in self.death_listeners:
+				l(self)
+
 	def is_alive(self):
 		return self.level is not None
 
 	def die(self):
+		self.fire_death_event()
 		self.level.kill(self)
 
 	def distance_to(self, pos):

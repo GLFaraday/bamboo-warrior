@@ -95,8 +95,8 @@ class Terrain(object):
 			grass_vertices += [v.x, v.y - 5, v.x, v.y + self.grass.height - 5]
 			grass_texcoords += [v.x / 128.0, self.grass.tex_coords[1], v.x / 128.0, self.grass.tex_coords[7]]
 		
-		batch.add(len(earth_vertices) / 2, GL_QUAD_STRIP, earthgroup, ('v2f', earth_vertices), ('t2f', earth_texcoords), ('c3B', earth_colours))
-		self.grass_list = batch.add(len(grass_vertices) / 2, GL_QUAD_STRIP, grassgroup, ('v2f', grass_vertices), ('t2f', grass_texcoords))
+		batch.add(len(earth_vertices) / 2, GL_QUAD_STRIP, earthgroup, ('v2f/static', earth_vertices), ('t2f/static', earth_texcoords), ('c3B/static', earth_colours))
+		self.grass_list = batch.add(len(grass_vertices) / 2, GL_QUAD_STRIP, grassgroup, ('v2f/stream', grass_vertices), ('t2f/static', grass_texcoords))
 		
 		self.batch = batch
 

@@ -8,8 +8,6 @@ from pyglet import gl
 from bamboo.gamestate import GameState, BambooWarriorGameState
 from bamboo.menu import MenuGameState
 
-FPS = 45
-
 class Game(object):
 	def __init__(self, options):
 		"""Here options is an optparse object or similar that contains a few
@@ -32,8 +30,11 @@ class Game(object):
 		else:
 			width = 1280
 			height = 720
-
-		window = pyglet.window.Window(width, height, fullscreen=options.fullscreen)
+		
+		if options.fullscreen:
+			window = pyglet.window.Window(fullscreen=True, vsync=False)
+		else:
+			window = pyglet.window.Window(width, height, vsync=False)
 		window.set_caption('Bamboo Warrior')
 		return window
 
@@ -74,6 +75,6 @@ class Game(object):
 		self.gamestate.draw()
 	
 	def run(self):
-		pyglet.clock.schedule_interval(self.update, (1.0/FPS))
-		pyglet.clock.set_fps_limit(FPS)
+		pyglet.clock.schedule_interval(self.update, (1.0/32.0))
+		pyglet.clock.set_fps_limit(32.0)
 		pyglet.app.run()

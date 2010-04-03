@@ -16,13 +16,14 @@ class Viewport(object):
 		self.scale = scale
 		
 	def bounds(self):
-		l = self.x - self.width // 2
-		b = self.y - self.height // 2
-		return Rect(l, b, self.width, self.height)
+		l = self.x - self.width * self.scale * 0.5
+		b = self.y - self.height * self.scale * 0.5
+		return Rect(l, b, self.width * self.scale, self.height * self.scale)
 
 	def apply_transform(self):
 		gl.glPushMatrix(gl.GL_MODELVIEW)
 		bounds  = self.bounds()
+		gl.glScalef(1.0 / self.scale, 1.0 / self.scale, 1)
 		gl.glTranslatef(-bounds.l, -bounds.b, 0)
 
 	def reset_transform(self):
@@ -38,8 +39,8 @@ class InfiniteDistanceBackground(object):
 		self.batch = pyglet.graphics.Batch()
 		self.group = pyglet.sprite.SpriteGroup(self.texture, gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 		self.vertexlist = self.batch.add(4, gl.GL_QUADS, self.group,
-			('v2i', [0,0, window.width,0, window.width,window.height, 0,window.height]),
-			('t3f', self.texture.tex_coords),
+			('v2i/static', [0,0, window.width,0, window.width,window.height, 0,window.height]),
+			('t3f/static', self.texture.tex_coords),
 		)
 #		from bamboo.actors.trees import BackgroundBambooTree
 #		import random
@@ -68,8 +69,8 @@ class NearBackground(object):
 		tex = self.texture
 		repeats = float(self.w) / (tex.width * self.scale)
 		self.vertexlist = self.batch.add(4, gl.GL_QUADS, self.group,
-			('v2f', [0,self.y, self.w,self.y, self.w,tex.height * self.scale + self.y, 0,tex.height * self.scale + self.y]),
-			('t2f', [0,0, repeats,0, repeats,0.99, 0,0.99])
+			('v2f/static', [0,self.y, self.w,self.y, self.w,tex.height * self.scale + self.y, 0,tex.height * self.scale + self.y]),
+			('t2f/static', [0,0, repeats,0, repeats,0.99, 0,0.99])
 		)
 
 	def draw(self, viewport):

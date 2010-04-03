@@ -5,6 +5,7 @@ from base import PhysicalObject, Actor
 from bamboo.geom import Vec2, Rect
 
 from bamboo.actors.gibs import BloodSpray
+from bamboo.actors.projectiles import Shuriken
 
 
 class Character(PhysicalObject):
@@ -30,6 +31,7 @@ class Character(PhysicalObject):
 	layer = 2
 
 	MAX_HEALTH = 10
+	MASS = 10
 
 	def __init__(self):
 		super(Character, self).__init__()
@@ -119,7 +121,7 @@ class Character(PhysicalObject):
 		self.on_jump()
 
 	def on_spawn(self):
-		pass
+		self.health = self.MAX_HEALTH
 
 	def jump(self):
 		if self.is_on_ground():
@@ -191,7 +193,7 @@ class Character(PhysicalObject):
 		if not self.can_attack():
 			return
 
-		self.attack_timer = self.ATTACK_RATE + 3
+		self.attack_timer = self.ATTACK_RATE + 6
 
 		off = 0
 		if self.is_climbing():
@@ -210,10 +212,10 @@ class Character(PhysicalObject):
 		dir = self.looking or self.dir
 		if dir == 'r':
 			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(180, 25))
-			force = Vec2(10, 0) + self.v
+			force = Vec2(50, 0) + self.v
 		else:
 			attack_region = Rect.from_corners(c - Vec2(0, 15), c + Vec2(-180, 25))
-			force = Vec2(-10, 0) + self.v
+			force = Vec2(-50, 0) + self.v
 
 		victims = [a for a in self.level.characters_colliding(attack_region) if a != self]
 		if not victims:
@@ -260,16 +262,29 @@ class Character(PhysicalObject):
 	def create_corpse(self):
 		corpse = self.CORPSE(self)
 		self.level.spawn(corpse, x=self.pos.x, y=self.pos.y)
+		corpse.v = self.v
 
 	def hit(self, point, force, damage=10):
 		for s in range(4):
 			off = Vec2(random.random() * 20 - 10, random.random() * 10 - 5) 
 			self.level.spawn(BloodSpray(v=force + off), x=point.x, y=point.y)
+		self.apply_impulse(force / self.MASS)
 		self.health -= damage
 		if self.health <= 0:
 			self.create_corpse()
 			self.on_death() 
-			self.level.kill(self)
+			self.die()
+
+	def throw_projectile(self, target, kls):
+		if not self.can_attack():
+			return
+		start = self.pos + Vec2(0, 80)
+		v = target - start
+		if not v:
+			return
+		v += Vec2(0, (0.01 * v.x) ** 2) # aim above
+		v = v.normalized() * 40
+		self.level.spawn(kls(v, self), x=start.x, y=start.y)
 
 	def on_death(self):
 		pass
@@ -295,7 +310,7 @@ class Corpse(PhysicalObject):
 		self.death_timer += 1
 		if self.death_timer < 15:
 			rot = 1 if self.dir == 'l' else -1
-			self.rotation = min(60, self.rotation + 0.6 + 0.3 * rot * self.death_timer)
+			self.rotation = min(50, self.rotation + 2 + 0.5 * rot * self.death_timer)
 		elif self.death_timer == 15:
 			self.rotation = 0
 			self.play_animation('dead', directional=True)

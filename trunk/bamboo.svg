@@ -6445,7 +6445,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.5"
-     inkscape:cx="1787.3021"
+     inkscape:cx="1067.3021"
      inkscape:cy="623.49542"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -12147,7 +12147,10 @@
        id="path3748" />
     <g
        id="g3794"
-       transform="translate(-510,-22.999997)">
+       transform="translate(-510,-22.999997)"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/sprites/shuriken.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
       <path
          transform="matrix(1.5714286,0,0,1.5714286,-262.37019,-281.36083)"
          d="m 469,496.36218 -4.52513,2.47488 L 462,503.36218 459.52513,498.83706 455,496.36218 l 4.52513,-2.47487 2.47487,-4.52513 2.47487,4.52513 4.52513,2.47487 z"

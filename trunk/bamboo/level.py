@@ -93,7 +93,10 @@ class Level(object):
 					intersection = a.bounds().intersection(b.bounds())
 					if intersection:
 						d = min(intersection.w, intersection.h) # amount of intersection
-						v = (b.pos - a.pos).normalized() # direction AB
+						ab = (b.pos - a.pos)
+						if not ab:
+							ab = Vec2(0, 1)
+						v = ab.normalized() # direction AB
 						a.pos -= v
 						b.pos += v
 

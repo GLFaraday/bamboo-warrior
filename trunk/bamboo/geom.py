@@ -45,6 +45,8 @@ class Vec2(object):
 		except AttributeError:
 			self._mag = math.sqrt(self.x * self.x  + self.y * self.y)
 			return self._mag
+	def mag2(self):
+		return self.x * self.x  + self.y * self.y
 
 	def normalized(self):
 		# check for mag smaller than a threshold to eliminate a class of numerical error problems
@@ -138,6 +140,10 @@ class Rect(object):
 	def __nonzero__(self):
 		return bool(self.w or self.h)
 
+	def contains(self, point):
+		return p.x >= self.l and p.x < self.r \
+			and p.y >= self.b and p.y < self.t
+
 	def intersection(self, r):
 		if not self.intersects(r):
 			return None
@@ -153,6 +159,15 @@ class Rect(object):
 		for v in [self.bottomleft(), self.bottomright(), self.topright(), self.topleft()]:
 			vs += [v.x, v.y]
 		return vs
+
+	def scale_about_center(self, sx, sy=None):
+		if sy is None:
+			sy = sx
+		return Rect.from_center(self.center(), self.w * sx, self.h * sy)
+
+	@staticmethod
+	def from_center(c, w, h):
+		return Rect(c.x - w * 0.5, c.y - h * 0.5, w, h)
 
 	@staticmethod
 	def from_corners(c1, c2):
