@@ -133,4 +133,25 @@ class MainMenu(Menu):
 		self.game.set_gamestate(MultiplayerGameState(self.game))
 
 	def exit_game(self):
-		pass
+		pyglet.app.exit()
+
+
+class InGameMenu(Menu):
+	def setup_options(self):
+		self.add_option('continue game', self.continue_game)
+		self.add_option('restart level', self.restart_level)
+		self.add_option('main menu', self.main_menu)
+		self.add_option('exit game', self.exit_game)
+
+	def continue_game(self):
+		self.game.gamestate = self.game.gamestate.child
+
+	def main_menu(self):
+		self.game.set_gamestate(MenuGameState(self.game, MainMenu(self.game)))
+
+	def restart_level(self):
+		self.continue_game()
+		self.game.gamestate.restart_level()
+
+	def exit_game(self):
+		pyglet.app.exit()
