@@ -121,11 +121,16 @@ class MenuGameState(GameState):
 class MainMenu(Menu):
 	def setup_options(self):
 		self.add_option('start new game', self.start_new_game)
+		self.add_option('multiplayer game', self.start_multiplayer_game)
 		self.add_option('exit game', self.exit_game)
 
 	def start_new_game(self):
 		from bamboo.gamestate import BambooWarriorGameState
 		self.game.set_gamestate(BambooWarriorGameState(self.game))
+
+	def start_multiplayer_game(self):
+		from bamboo.gamestate import MultiplayerGameState
+		self.game.set_gamestate(MultiplayerGameState(self.game))
 
 	def exit_game(self):
 		pass

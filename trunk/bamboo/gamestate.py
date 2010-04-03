@@ -51,9 +51,6 @@ class BambooWarriorGameState(GameState):
 		self.player = PlayerController(self.pc)
 		self.level.spawn(self.pc, x=60, controller=self.player)
 
-		ninja = Ninja()
-		self.level.spawn(ninja, x=1000, controller=AIController(ninja))
-
 	def update(self, keys):
 		player = self.player
 
@@ -95,4 +92,73 @@ class StaticLevelGameState(BambooWarriorGameState):
 		self.update({})
 		self.scene.camera.move_to(Vec2(60, 60))
 		self.scene.update()
+		self.scene.draw()
+
+
+class MultiplayerGameState(BambooWarriorGameState):
+	def __init__(self, game, level='arena.svg'):
+		super(MultiplayerGameState, self).__init__(game, level)
+
+	def start(self):
+		"""Start is called when the gamestate is initialised"""
+		from bamboo.actors.samurai import Samurai
+		from bamboo.actors.playercharacter import PlayerController
+
+		self.pc1 = Samurai(col=(255,200,200))
+		self.pc2 = Samurai(col=(200,200,255))
+		self.player1 = PlayerController(self.pc1)
+		self.player2 = PlayerController(self.pc2)
+		self.spawn_p1()
+		self.spawn_p2()
+
+	def spawn_p1(self):
+		self.level.spawn(self.pc1, x=60, controller=self.player1)
+
+	def spawn_p2(self):
+		self.pc2.dir = 'l'
+		self.level.spawn(self.pc2, x=self.level.width - 60, controller=self.player2)
+
+	def update(self, keys):
+		player1 = self.player1
+		player2 = self.player2
+		if self.pc1.is_alive():
+			if keys[key.Z]:
+				player1.jump()
+			elif keys[key.X]:
+				player1.attack()
+
+			if keys[key.UP]:
+				player1.up()
+			elif keys[key.DOWN]:
+				player1.down()
+			elif keys[key.RIGHT]:
+				player1.right()
+			elif keys[key.LEFT]:
+				player1.left()
+		else:
+			self.spawn_p1()
+
+		if self.pc2.is_alive():
+			if keys[key.O]:
+				player2.jump()
+			elif keys[key.P]:
+				player2.attack()
+
+			if keys[key.W]:
+				player2.up()
+			elif keys[key.S]:
+				player2.down()
+			elif keys[key.D]:
+				player2.right()
+			elif keys[key.A]:
+				player2.left()
+		else:
+			self.spawn_p2()
+
+		self.level.update()
+
+	def draw(self):
+		self.scene.update()
+		# TODO: multitrackingcamera
+		self.scene.camera.move_to(Vec2(self.level.width // 2, 60))
 		self.scene.draw()

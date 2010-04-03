@@ -1,17 +1,37 @@
+import pyglet
+from pyglet import gl
+
 from bamboo.actors.characters import Character, Corpse
 
 
 class SamuraiCorpse(Corpse):
+	def __init__(self, character):
+		super(SamuraiCorpse, self).__init__(character)
+		self.col = character.col
+
 	@classmethod
 	def on_class_load(cls):
 		cls.load_directional_sprite('dying', 'samurai-dying.png', anchor_x=125)
 		cls.load_directional_sprite('dead', 'samurai-dead.png', anchor_x=160, anchor_y=15)
+
+	def update_batch(self, batch):
+		super(SamuraiCorpse, self).update_batch(batch)
+		if self.col and self.sprite:
+			self.sprite.color = self.col
 
 
 class Samurai(Character):
 	"""Represents a set of graphics"""
 	CORPSE = SamuraiCorpse
 	MAX_HEALTH = 30
+	def __init__(self, col=None):
+		super(Samurai, self).__init__()
+		self.col = col
+
+	def update_batch(self, batch):
+		super(Samurai, self).update_batch(batch)
+		if self.col and self.sprite:
+			self.sprite.color = self.col
 	
 	@classmethod
 	def on_class_load(cls):
