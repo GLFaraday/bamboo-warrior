@@ -141,6 +141,8 @@ class AIController(object):
 			if tree and dist < 300:
 				self.target_tree = tree
 			else:
+				if self.character.is_climbing():
+					self.character.jump()
 				self.set_strategy('await')
 				return
 
@@ -165,7 +167,7 @@ class AIController(object):
 			if not self.character.is_climbing():
 				self.set_strategy('approach')
 		else:
-			self.run_towards_target()
+			self.character.looking = self.direction_to(self.target.pos)
 			if (self.target.pos - self.character.pos).mag() < 200:
 				self.character.attack()
 			self.character.stop()
@@ -185,6 +187,8 @@ class AIController(object):
 				self.character.attack()
 				self.attack_timer = self.ATTACK_RATE
 			self.character.stop()
+		if self.character.is_climbing():
+			self.character.jump()
 
 	def strategy_await(self):
 		if not self.is_target_climbing():

@@ -83,6 +83,8 @@ class Character(PhysicalObject):
 
 	def climb(self, tree, rate=0):
 		"""Set this character as climbing the given tree."""
+		if self.climbing:
+			self.climbing.remove_actor(self)
 		tree.add_actor(self)
 		self.looking = None
 		self.climb_rate = rate
@@ -289,7 +291,7 @@ class Character(PhysicalObject):
 		v = target - start
 		if not v:
 			return
-		v += Vec2(0, (0.01 * v.x) ** 2) # aim above
+		v += Vec2(0, (0.02 * v.x) ** 2) # aim above
 		v = v.normalized() * 30
 		self.level.spawn(kls(v, self), x=start.x, y=start.y)
 
