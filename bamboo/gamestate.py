@@ -24,14 +24,22 @@ class BambooWarriorGameState(GameState):
 	It should be possible to replace the gamestate to do something different
 	with input or graphics."""
 
-	def __init__(self, game, level='level1.svg'):
+	def __init__(self, game, levels=['level1.svg', 'level2.svg']):
 		self.game = game
 		self.huds = []
-		self.start_level(level)
+		self.levels = levels[:]
+		self.start_level(self.levels.pop(0))
 
 	def get_camera(self):
 		from bamboo import camera
 		return camera.LeadingCamera.for_window(self.scene.window, level=self.level)
+
+	def restart_level(self):
+		from bamboo.scene import Scene
+		self.level.restart()
+		self.scene = Scene(self.game.window, self.level)
+		self.scene.camera = self.get_camera()
+		self.start()
 
 	def start_level(self, level):
 		from bamboo.levelloader import SVGLevelLoader
@@ -42,6 +50,10 @@ class BambooWarriorGameState(GameState):
 		self.scene = Scene(self.game.window, self.level)
 		self.scene.camera = self.get_camera()
 		self.level.restart()
+
+	def next_level(self):
+		self.start_level(self.levels.pop(0))
+		self.start()
 
 	def start(self):
 		"""Start is called when the gamestate is initialised"""
@@ -66,6 +78,12 @@ class BambooWarriorGameState(GameState):
 		HUD.load_resources()
 		hud = HUD(self.game.window, pc, side=side, col=col)
 		self.huds.append(hud)
+
+	def on_key_press(self, code, modifiers):
+		from bamboo.menu import MenuGameState, InGameMenu
+		if code == key.ESCAPE:
+			self.game.set_gamestate(MenuGameState(self.game, InGameMenu(self.game), child=self))
+			return True
 		
 	def on_player_death(self, player):
 		if self.pc.lives == 0:
@@ -99,6 +117,10 @@ class BambooWarriorGameState(GameState):
 
 			self.scene.camera.track(self.pc.pos)
 
+			if self.pc.pos.x > self.level.width and self.levels:
+				self.next_level()
+				return
+
 		self.level.update()
 
 	def draw(self):
@@ -112,8 +134,8 @@ class BambooWarriorGameState(GameState):
 
 class StaticLevelGameState(BambooWarriorGameState):
 	"""A gamestate that renders a static level. Used by the menu system"""
-	def __init__(self, game, level='title.svg'):
-		super(StaticLevelGameState, self).__init__(game, level)
+	def __init__(self, game, levels=['title.svg']):
+		super(StaticLevelGameState, self).__init__(game, levels)
 
 	def update(self, keys):
 		self.level.update_scenery()
@@ -126,8 +148,8 @@ class StaticLevelGameState(BambooWarriorGameState):
 
 
 class MultiplayerGameState(BambooWarriorGameState):
-	def __init__(self, game, level='arena.svg'):
-		super(MultiplayerGameState, self).__init__(game, level)
+	def __init__(self, game, levels=['arena.svg']):
+		super(MultiplayerGameState, self).__init__(game, levels)
 
 	def get_camera(self):
 		from bamboo import camera
