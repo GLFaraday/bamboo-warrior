@@ -18,7 +18,7 @@ class Viewport(object):
 	def bounds(self):
 		l = self.x - self.width // 2
 		b = self.y - self.height // 2
-		return Rect(l, b, l, b + self.height)
+		return Rect(l, b, self.width, self.height)
 
 	def apply_transform(self):
 		gl.glPushMatrix(gl.GL_MODELVIEW)
@@ -53,10 +53,12 @@ class InfiniteDistanceBackground(object):
 	def draw(self):
 		self.batch.draw()
 
-class ZeroDistanceBackground(object):
-	def __init__(self, texturename, level, scale=2, y=100):
+class NearBackground(object):
+	def __init__(self, texturename, level, scale=2, y=100, depth=0.1):
 		self.texture = pyglet.resource.texture(texturename)
-		self.scale = scale
+		self.scale = scale * (1 + depth)
+		self.level_w = level.width
+		self.w = self.level_w * (1 + depth)
 		self.y = y
 		self.create_batch(level)
 	
@@ -64,14 +66,21 @@ class ZeroDistanceBackground(object):
 		self.batch = pyglet.graphics.Batch()
 		self.group = pyglet.sprite.SpriteGroup(self.texture, gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
 		tex = self.texture
-		repeats = float(level.width) / (tex.width * self.scale)
+		repeats = float(self.w) / (tex.width * self.scale)
 		self.vertexlist = self.batch.add(4, gl.GL_QUADS, self.group,
-			('v2i', [0,self.y, level.width,self.y, level.width,tex.height * self.scale + self.y, 0,tex.height * self.scale + self.y]),
+			('v2f', [0,self.y, self.w,self.y, self.w,tex.height * self.scale + self.y, 0,tex.height * self.scale + self.y]),
 			('t2f', [0,0, repeats,0, repeats,0.99, 0,0.99])
 		)
 
-	def draw(self):
+	def draw(self, viewport):
+		bs = viewport.bounds()
+		wfrac = bs.l / float(self.level_w - bs.w)
+		dx = (self.w - self.level_w) * (wfrac - 0.5)
+
+		gl.glPushMatrix(gl.GL_MODELVIEW)
+		gl.glTranslatef(dx, 0, 0)
 		self.batch.draw()
+		gl.glPopMatrix(gl.GL_MODELVIEW)
 
 
 class Scene(object):
@@ -82,7 +91,7 @@ class Scene(object):
 		self.level = level
 		self.camera = FixedCamera.for_window(self.window)
 		self.background = InfiniteDistanceBackground('distant-background.png', window)
-		self.background2 = ZeroDistanceBackground('bamboo-forest.png', level)
+		self.background2 = NearBackground('bamboo-forest.png', level)
 		self.batch = pyglet.graphics.Batch()
 		self.fps = pyglet.clock.ClockDisplay()
 
@@ -92,9 +101,10 @@ class Scene(object):
 
 	def draw(self):
 		viewport = self.camera.get_viewport()
+
 		self.background.draw()
 		viewport.apply_transform()
-		self.background2.draw()
+		self.background2.draw(viewport)
 		# set up matrix for viewport
 		# compute PVS
 		self.batch.draw()	
