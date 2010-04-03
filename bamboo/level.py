@@ -76,6 +76,7 @@ class Level(object):
 
 	def update(self):
 		"""Run physics, update everything in the world"""
+		from bamboo.actors.characters import Character
 		self.ground.update()
 
 		for c in self.controllers:
@@ -84,6 +85,12 @@ class Level(object):
 		self.collide()
 
 		for a in self.actors:
+			if isinstance(a, Character):
+				if a.pos.x < 0:
+					a.pos = Vec2(0, a.pos.x)
+				elif a.pos > self.width:
+					# TODO: fire level completion event
+					pass
 			a.update()
 
 	def collide(self):

@@ -6,7 +6,7 @@ from pyglet.gl import *
 
 from base import Actor
 
-from bamboo.geom import Vec2, Matrix2
+from bamboo.geom import Vec2, Matrix2, Rect
 
 
 class Climbable(object):
@@ -246,6 +246,9 @@ class BambooTree(Actor, Climbable):
 		self.wind_phase += 1.0 / self.height
 		self.wobble_angle = 0.4 * math.sin(self.wind_phase) + 0.2 * math.sin(self.wind_phase * 0.21) 
 		#self.compute_wobble()
+
+	def cull_bounds(self):
+		return Rect(self.pos.x - 250, self.pos.y, 500, self.height * self.PIECE_HEIGHT + 200)
 
 	def draw(self):
 		self.batch.draw()

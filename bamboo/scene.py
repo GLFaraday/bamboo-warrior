@@ -94,12 +94,21 @@ class Scene(object):
 		self.background = InfiniteDistanceBackground('distant-background.png', window)
 		self.background2 = NearBackground('bamboo-forest.png', level, depth=0.15)
 		self.background3 = NearBackground('bamboo-forest.png', level, depth=0.4, y=-150)
+		self.trees_batch = pyglet.graphics.Batch()
 		self.batch = pyglet.graphics.Batch()
 		self.fps = pyglet.clock.ClockDisplay()
 
 	def update(self):
+		from bamboo.actors.trees import BambooTree
+		view_rect = self.camera.get_viewport().bounds()
+		ts = 0
 		for a in self.level.get_actors():
-			a.update_batch(self.batch)
+			if isinstance(a, BambooTree):
+				if a.cull_bounds().intersects(view_rect):
+					a.update_batch(self.trees_batch)
+					ts += 1
+			else:
+				a.update_batch(self.batch)
 
 	def draw_bboxes(self):
 		gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE)
@@ -124,6 +133,7 @@ class Scene(object):
 		self.background2.draw(viewport)
 
 		# TODO: compute PVS
+		self.trees_batch.draw()	
 		self.batch.draw()	
 		self.level.ground.draw()
 

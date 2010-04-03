@@ -26,6 +26,7 @@ class BambooWarriorGameState(GameState):
 
 	def __init__(self, game, level='level1.svg'):
 		self.game = game
+		self.huds = []
 		self.start_level(level)
 
 	def get_camera(self):
@@ -54,13 +55,27 @@ class BambooWarriorGameState(GameState):
 
 		self.pc = Samurai()
 		self.player = PlayerController(self.pc)
+		self.pc.lives = 4
 		self.spawn_player()
 		self.pc.add_death_listener(self.on_player_death)
+	
+		self.create_hud(self.pc)
+
+	def create_hud(self, pc, side='l', col=(255, 255, 255)):
+		from bamboo.hud import HUD
+		HUD.load_resources()
+		hud = HUD(self.game.window, pc, side=side, col=col)
+		self.huds.append(hud)
 		
 	def on_player_death(self, player):
-		pyglet.clock.schedule_once(self.spawn_player, 3)
+		if self.pc.lives == 0:
+			# do game over
+			pass
+		else:
+			pyglet.clock.schedule_once(self.spawn_player, 3)
 
 	def spawn_player(self, *args):
+		self.pc.lives -= 1
 		self.pc.v = Vec2(0,0)
 		self.level.spawn(self.pc, x=60, controller=self.player)
 
@@ -90,6 +105,9 @@ class BambooWarriorGameState(GameState):
 		self.scene.update()
 		self.scene.camera.update()
 		self.scene.draw()
+		for h in self.huds:
+			h.update_batch()
+			h.draw()
 
 
 class StaticLevelGameState(BambooWarriorGameState):
@@ -125,6 +143,11 @@ class MultiplayerGameState(BambooWarriorGameState):
 		self.pc2 = Samurai(col=(200,200,255))
 		self.player1 = PlayerController(self.pc1)
 		self.player2 = PlayerController(self.pc2)
+		self.player1.lives = 0
+		self.player2.lives = 0
+		self.create_hud(self.pc1, side='l', col=self.pc1.col)
+		self.create_hud(self.pc2, side='r', col=self.pc2.col)
+
 		self.spawn_p1()
 		self.spawn_p2()
 
@@ -187,3 +210,6 @@ class MultiplayerGameState(BambooWarriorGameState):
 		self.scene.update()
 		self.scene.camera.update()
 		self.scene.draw()
+		for h in self.huds:
+			h.update_batch()
+			h.draw()
