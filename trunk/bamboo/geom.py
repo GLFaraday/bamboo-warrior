@@ -147,6 +147,13 @@ class Rect(object):
 		ys.sort()
 		return Rect(xs[1], ys[1], xs[2] - xs[1], ys[2] - ys[1])
 
+	def vertices(self):
+		"""Pyglet vertex list"""
+		vs = []
+		for v in [self.bottomleft(), self.bottomright(), self.topright(), self.topleft()]:
+			vs += [v.x, v.y]
+		return vs
+
 	@staticmethod
 	def from_corners(c1, c2):
 		x1, x2 = sorted([c1.x, c2.x])
