@@ -29,7 +29,6 @@ class AIController(object):
 		if distance < self.SLEEP_DISTANCE:
 			return nearest
 
-
 	def range_to(self, pos):
 		return (pos - self.character.pos).mag()
 
@@ -75,15 +74,24 @@ class AIController(object):
 	def on_character_death(self):
 		pass
 
-	def update(self):
-		if self.attack_timer > 0:
-			self.attack_timer -= 1
+	def reconsider_target(self):
+		if self.target and (self.range_to_target() > self.SLEEP_DISTANCE or not self.target.is_alive()):
+			self.target = None
+			self.strategy = None
 
 		if not self.target or not self.target.is_alive():
 			t = self.choose_target()
 			if not t:
 				return
 			self.target = t
+
+	def update(self):
+		if self.attack_timer > 0:
+			self.attack_timer -= 1
+		self.reconsider_target()
+
+		if not self.target:
+			return
 
 		if not self.strategy or self.strategy_time % 30 == 0:
 			self.pick_strategy()

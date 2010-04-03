@@ -28,7 +28,7 @@ class Character(PhysicalObject):
 
 	collision_mask = 0x01
 
-	layer = 2
+	layer = 5
 
 	MAX_HEALTH = 10
 	MASS = 10
@@ -283,7 +283,7 @@ class Character(PhysicalObject):
 		if not v:
 			return
 		v += Vec2(0, (0.01 * v.x) ** 2) # aim above
-		v = v.normalized() * 40
+		v = v.normalized() * 30
 		self.level.spawn(kls(v, self), x=start.x, y=start.y)
 
 	def on_death(self):
