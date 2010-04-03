@@ -4,6 +4,7 @@ import random
 from base import PhysicalObject, Actor
 from bamboo.geom import Vec2, Rect
 
+from bamboo.actors.particles import Smoke
 from bamboo.actors.gibs import BloodSpray
 from bamboo.actors.projectiles import Shuriken
 
@@ -159,6 +160,11 @@ class Character(PhysicalObject):
 		else:
 			f = self.get_net_force()
 			# TODO: apply force to the tree we're climbing
+
+		if self.is_on_ground() and self.crouching and abs(self.v.x) > 2:
+			if random.randint(0, 3) == 0:
+				s = Smoke(dir='r' if self.dir == 'l' else 'l')
+				self.level.spawn(s, x=self.pos.x)
 		self.update_animation()
 
 	def draw_trail(self):

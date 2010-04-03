@@ -116,8 +116,7 @@ class StaticLevelGameState(BambooWarriorGameState):
 		super(StaticLevelGameState, self).__init__(game, level)
 
 	def update(self, keys):
-		#TODO: update particles
-		self.level.ground.update()
+		self.level.update_scenery()
 
 	def draw(self):
 		self.update({})
