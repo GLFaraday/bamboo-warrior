@@ -13,7 +13,7 @@ class Ninja(Character):
 	TRAIL_LENGTH = 2
 	TRAIL_DECAY = 0.7
 
-	MAX_HEALTH = 20
+	MAX_HEALTH = 10
 
 	CORPSE = NinjaCorpse
 	

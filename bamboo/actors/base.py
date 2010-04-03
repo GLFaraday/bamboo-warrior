@@ -67,13 +67,14 @@ class Actor(ResourceTracker):
 			return
 		self.next = name
 
+	def parent_group(self):
+		if hasattr(self, 'layer'):
+			return pyglet.graphics.OrderedGroup(self.layer)
+
 	def update_batch(self, batch):
 		if self.next is not None:
+			group = self.parent_group()
 			if not self.sprite:
-				if hasattr(self, 'layer'):
-					group = pyglet.graphics.OrderedGroup(self.layer)
-				else:
-					group = None
 				self.sprite = pyglet.sprite.Sprite(self.graphics[self.next], self.pos.x, self.pos.y, batch=batch, group=group)
 			self.sprite.image = self.graphics[self.next]
 			self.current = self.next

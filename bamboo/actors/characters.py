@@ -224,14 +224,17 @@ class Character(PhysicalObject):
 		w, h = self.dims()
 		return Rect(self.pos.x - w / 2, self.pos.y, w, h)
 
+	def create_corpse(self):
+		corpse = self.CORPSE(self)
+		self.level.spawn(corpse, x=self.pos.x, y=self.pos.y)
+
 	def hit(self, point, force, damage=10):
 		for s in range(4):
 			off = Vec2(random.random() * 20 - 10, random.random() * 10 - 5) 
 			self.level.spawn(BloodSpray(v=force + off), x=point.x, y=point.y)
 		self.health -= damage
 		if self.health <= 0:
-			corpse = self.CORPSE(self)
-			self.level.spawn(corpse, x=self.pos.x, y=self.pos.y)
+			self.create_corpse()
 			self.on_death() 
 			self.level.kill(self)
 

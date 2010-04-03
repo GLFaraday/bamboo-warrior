@@ -112,7 +112,7 @@ class PathLoader(object):
 			if state in 'lm':
 				pos += v
 				yield pos
-			elif state == 'LM':
+			elif state in 'LM':
 				pos = v
 				yield pos
 			else:
