@@ -15,7 +15,7 @@
    id="svg15223"
    version="1.1"
    inkscape:version="0.47pre0 r21549"
-   sodipodi:docname="level3.svg"
+   sodipodi:docname="level4.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs15225">
@@ -1768,9 +1768,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.088388348"
-     inkscape:cx="7533.3966"
-     inkscape:cy="-1517.6944"
+     inkscape:zoom="0.5"
+     inkscape:cx="2180.7494"
+     inkscape:cy="628.47985"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -1789,7 +1789,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -1829,94 +1829,103 @@
      style="display:inline">
     <path
        style="color:#000000;fill:none;stroke:#008000;stroke-width:2;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 1.2500002,908.60999 2879.5521998,-1.72381 164.2761,-64.07916 757.2591,-0.45332 148.2397,63.89207 65.4388,1.33006"
+       d="m -137.92173,713.03784 469.57638,-54.22206 550.1708,-8.61747 542.01545,-236.85367 112.6143,-4.90829 240.7955,74.19681 216.1345,-1.97039 201.1619,-43.05979 188.1058,-139.87945 1723.006,-3.23809"
        id="ground"
        inkscape:label="#path16054"
-       sodipodi:nodetypes="cccccc" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#BambooTree"
-       id="use16077"
-       transform="translate(898,908.99784)"
-       width="6000"
-       height="1052.36" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#BambooTree"
-       id="use16081"
-       transform="translate(1171,910.99784)"
-       width="6000"
-       height="1052.36" />
+       sodipodi:nodetypes="cccccccccc" />
     <use
        height="1052.36"
        width="6000"
-       transform="translate(3417.8281,837.68597)"
-       id="use8188"
-       xlink:href="#Torii"
-       y="0"
-       x="0"
-       style="display:inline" />
-    <use
-       height="1"
-       width="1"
-       id="use8190"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(1406.7129,899.06055)" />
-    <use
-       height="1"
-       width="1"
-       id="use8192"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(994.7129,907.06055)" />
-    <use
-       height="1"
-       width="1"
-       id="use8194"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(1890.7129,907.06055)" />
-    <use
-       height="1"
-       width="1"
-       id="use8196"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(2074.713,907.06055)" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#BambooTree"
-       id="use8214"
-       transform="translate(2411,910.99784)"
-       width="6000"
-       height="1052.36" />
-    <use
-       height="1052.36"
-       width="6000"
-       transform="translate(1715,910.99784)"
-       id="use8212"
+       transform="translate(2739.0929,296.61515)"
+       id="use12791"
        xlink:href="#BambooTree"
        y="0"
        x="0" />
     <use
        height="1052.36"
        width="6000"
-       transform="translate(2871,910.99784)"
-       id="use8216"
+       transform="translate(3000.4109,296.61515)"
+       id="use12793"
        xlink:href="#BambooTree"
        y="0"
        x="0" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#BambooTree"
+       id="use12789"
+       transform="translate(3746.0129,302.27201)"
+       width="6000"
+       height="1052.36" />
+    <use
+       transform="translate(3462.3719,297.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5204"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(3020.3719,279.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5222"
+       width="1"
+       height="1" />
+    <use
+       height="1"
+       width="1"
+       id="use5267"
+       xlink:href="#StandingNinja"
+       y="0"
+       x="0"
+       style="display:inline"
+       transform="translate(3212.3719,287.06055)" />
+    <use
+       x="0"
+       y="0"
+       xlink:href="#BambooTree"
+       id="use8198"
+       transform="translate(1139.3199,544.76739)"
+       width="6000"
+       height="1052.36" />
+    <use
+       height="1052.36"
+       width="6000"
+       transform="translate(1519.3199,414.76739)"
+       id="use9566"
+       xlink:href="#BambooTree"
+       y="0"
+       x="0" />
+    <use
+       height="1"
+       width="1"
+       id="use9570"
+       xlink:href="#StandingNinja"
+       y="0"
+       x="0"
+       style="display:inline"
+       transform="translate(1372.3719,425.06055)" />
+    <use
+       height="1"
+       width="1"
+       id="use9572"
+       xlink:href="#StandingNinja"
+       y="0"
+       x="0"
+       style="display:inline"
+       transform="translate(1804.3719,479.06055)" />
+    <use
+       transform="translate(1994.3719,475.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use9568"
+       width="1"
+       height="1" />
   </g>
 </svg>

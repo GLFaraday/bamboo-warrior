@@ -41,6 +41,8 @@ class Level(object):
 		self.ground = ground
 		self.actor_spawns = actor_spawns
 		self.actors = []
+		self.climbables = []
+		self.characters = []
 		self.controllers = []
 
 	def restart(self):
@@ -61,10 +63,26 @@ class Level(object):
 			actor.controller = controller
 			self.controllers.append(controller)
 
+		from bamboo.actors.samurai import Character
+		from bamboo.actors.trees import Climbable
+		if isinstance(actor, Character):
+			self.characters.append(actor)
+		elif isinstance(actor, Climbable):
+			if actor.is_climbable():
+				self.climbables.append(actor)
 		self.actors.append(actor)
 		actor.on_spawn()
 
 	def kill(self, actor):
+		from bamboo.actors.samurai import Character
+		from bamboo.actors.trees import Climbable
+		if isinstance(actor, Character):
+			self.characters.remove(actor)
+		elif isinstance(actor, Climbable):
+			try:
+				self.climbables.remove(actor)
+			except ValueError:
+				pass
 		self.actors.remove(actor)
 		if actor.controller:
 			actor.controller.on_character_death()
@@ -92,7 +110,7 @@ class Level(object):
 		for c in self.controllers:
 			c.update()
 
-		self.collide()
+#		self.collide()
 
 		for a in self.actors:
 			if isinstance(a, Character):
@@ -104,24 +122,21 @@ class Level(object):
 			a.update()
 
 	def collide(self):
-		for i, a in enumerate(self.actors):
-			for b in self.actors[i+1:]:
-				if a.collision_mask & b.collision_mask:
-					intersection = a.bounds().intersection(b.bounds())
-					if intersection:
-						d = min(intersection.w, intersection.h) # amount of intersection
-						ab = (b.pos - a.pos)
-						if not ab:
-							ab = Vec2(0, 1)
-						v = ab.normalized() # direction AB
-						a.pos -= v
-						b.pos += v
+		for i, a in enumerate(self.characters):
+			for b in self.characters[i+1:]:
+				intersection = a.bounds().intersection(b.bounds())
+				if intersection:
+					d = min(intersection.w, intersection.h) # amount of intersection
+					ab = (b.pos - a.pos)
+					if not ab:
+						ab = Vec2(0, 1)
+					v = ab.normalized() # direction AB
+					a.pos -= v
+					b.pos += v
 
 	def get_climbables(self):
-		from bamboo.actors.trees import Climbable
-		for a in self.actors:
-			if isinstance(a, Climbable) and a.is_climbable():
-				yield a
+		for a in self.climbables:
+			yield a
 
 	def get_nearest_climbable(self, pos):
 		"""Return the nearest climbable and the distance to that climbable."""
@@ -136,10 +151,8 @@ class Level(object):
 		return nearest, distance
 
 	def find_playercharacters(self):
-		from bamboo.actors.samurai import Character
-		return [a for a in self.actors if isinstance(a, Character) and a.is_pc]
+		return [a for a in self.characters if a.is_pc]
 
 	def characters_colliding(self, rect):
-		from bamboo.actors.samurai import Character
-		return [a for a in self.actors if isinstance(a, Character) and a.bounds().intersects(rect)]
+		return [a for a in self.characters if a.bounds().intersects(rect)]
 		
