@@ -26,13 +26,11 @@ Othewise open a terminal / console and "cd" to the game directory and run:
 
 HOW TO PLAY THE GAME:
 
-Menu
+Menus: Up and down cursor keys to choose an item, ENTER to select.
 
-Control the Samurai with the cursor keys. Pre
+Single-player: Control the Samurai with the cursor keys. RIGHT SHIFT is jump, and RIGHT CTRL is attack. Press the UP or DOWN arrow keys near a bamboo tree to climb it.
 
-Move the cursor around the screen with the mouse.
-
-Press the left mouse button to fire the ducks.
+Multiplayer: Red samurai uses the same keys as in single-player. Blue samurai uses WASD for movement; U for jump, and I for attack.
 
 
 

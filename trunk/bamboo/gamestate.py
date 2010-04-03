@@ -83,9 +83,9 @@ class BambooWarriorGameState(GameState):
 		player = self.player
 
 		if self.pc.is_alive():
-			if keys[key.Z]:
+			if keys[key.RSHIFT]:
 				player.jump()
-			elif keys[key.X]:
+			elif keys[key.RCTRL]:
 				player.attack()
 
 			if keys[key.UP]:
@@ -164,9 +164,9 @@ class MultiplayerGameState(BambooWarriorGameState):
 		player1 = self.player1
 		player2 = self.player2
 		if self.pc1.is_alive():
-			if keys[key.Z]:
+			if keys[key.RSHIFT]:
 				player1.jump()
-			elif keys[key.X]:
+			elif keys[key.RCTRL]:
 				player1.attack()
 
 			if keys[key.UP]:
@@ -181,9 +181,9 @@ class MultiplayerGameState(BambooWarriorGameState):
 			self.spawn_p1()
 
 		if self.pc2.is_alive():
-			if keys[key.O]:
+			if keys[key.U]:
 				player2.jump()
-			elif keys[key.P]:
+			elif keys[key.I]:
 				player2.attack()
 
 			if keys[key.W]:
