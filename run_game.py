@@ -13,10 +13,11 @@ parser.add_option('-p', '--profiler', action='store_true', help='Print profiler 
 
 options, arguments = parser.parse_args()
 
-from bamboo.game import Game, BambooWarriorGameState
+from bamboo.menu import MenuGameState
+from bamboo.game import Game
 
 game = Game(options)
-state = BambooWarriorGameState(game)
+state = MenuGameState(game)
 game.set_gamestate(state)
 
 if options.profiler:

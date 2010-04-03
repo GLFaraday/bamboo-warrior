@@ -4,6 +4,7 @@ class ActorSpawn(object):
 	NAME_MAP = {
 		'BambooTree': 'bamboo.actors.trees.BambooTree',
 		'Torii': 'bamboo.actors.scenery.Torii',
+		'EatingSamurai': 'bamboo.actors.scenery.EatingSamurai',
 		'StandingNinja': 'bamboo.actors.ninja.Ninja',
 	}
 
@@ -80,7 +81,7 @@ class Level(object):
 		for c in self.controllers:
 			c.update()
 
-		# self.collide()
+		self.collide()
 
 		for a in self.actors:
 			a.update()
@@ -93,8 +94,8 @@ class Level(object):
 					if intersection:
 						d = min(intersection.w, intersection.h) # amount of intersection
 						v = (b.pos - a.pos).normalized() # direction AB
-						a.apply_force(-5 * d * v)
-						b.apply_force(5 * d * v)
+						a.pos -= v
+						b.pos += v
 
 	def get_climbables(self):
 		from bamboo.actors.trees import Climbable

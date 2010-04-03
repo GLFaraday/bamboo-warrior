@@ -91,7 +91,8 @@ class Scene(object):
 		self.level = level
 		self.camera = FixedCamera.for_window(self.window)
 		self.background = InfiniteDistanceBackground('distant-background.png', window)
-		self.background2 = NearBackground('bamboo-forest.png', level)
+		self.background2 = NearBackground('bamboo-forest.png', level, depth=0.15)
+		self.background3 = NearBackground('bamboo-forest.png', level, depth=0.4, y=-150)
 		self.batch = pyglet.graphics.Batch()
 		self.fps = pyglet.clock.ClockDisplay()
 
@@ -104,6 +105,7 @@ class Scene(object):
 
 		self.background.draw()
 		viewport.apply_transform()
+		self.background3.draw(viewport)
 		self.background2.draw(viewport)
 		# set up matrix for viewport
 		# compute PVS
