@@ -5,6 +5,7 @@ from pyglet.window import key
 from bamboo.resources import ResourceTracker
 from bamboo.gamestate import GameState, StaticLevelGameState
 
+
 class MenuItem(object):
 	def __init__(self, label, callback):
 		self.label = label
@@ -24,6 +25,7 @@ class Menu(ResourceTracker):
 	def __init__(self, game):
 		self.game = game
 		self.options = []
+		self.message = None
 		self.setup_options()
 		self.batch = None
 		self.selected_option = 0
@@ -33,6 +35,9 @@ class Menu(ResourceTracker):
 
 	def add_option(self, label, callback):
 		self.options.append(MenuItem(label, callback))
+
+	def set_message(self, message):
+		self.message = message
 
 	@classmethod
 	def on_class_load(cls):
@@ -58,12 +63,20 @@ class Menu(ResourceTracker):
 		self.logo = pyglet.sprite.Sprite(self.graphics['logo'], batch=batch, group=pyglet.graphics.OrderedGroup(2), x=c, y=window.height - 200)
 		self.batch = batch
 
+		y = window.height - 300
+
+		if self.message:
+			col = (0x6c, 0x88, 0x4b, 0xff)
+			self.message_label = pyglet.text.Label(self.message, font_name='URW Gothic L', font_size=19, x=c, y=y, color=col, batch=batch, anchor_x='center')
+			y -= 100
+
 		for i, o in enumerate(self.options):
-			y = window.height - 300 - 50 * i
 			o.update_batch(batch, c, y)
 
 			if i == self.selected_option:
 				self.sel = pyglet.sprite.Sprite(self.graphics['sel'], batch=batch, group=pyglet.graphics.OrderedGroup(2), x=o.r()[0], y=y)
+
+			y -= 50
 
 	def get_selected_option(self):
 		return self.options[self.selected_option]
@@ -82,6 +95,7 @@ class Menu(ResourceTracker):
 	def draw(self):
 		self.batch.draw()
 		
+
 
 class MenuGameState(GameState):
 	def __init__(self, game, menu=None, child=None):
@@ -155,3 +169,18 @@ class InGameMenu(Menu):
 
 	def exit_game(self):
 		pyglet.app.exit()
+
+
+class GameOverMenu(InGameMenu):
+	def setup_options(self):
+		self.set_message('game over')
+		self.add_option('restart level', self.restart_level)
+		self.add_option('main menu', self.main_menu)
+		self.add_option('exit game', self.exit_game)
+
+
+class EndGameMenu(InGameMenu):
+	def setup_options(self):
+		self.set_message('you win')
+		self.add_option('main menu', self.main_menu)
+		self.add_option('exit game', self.exit_game)

@@ -15,7 +15,7 @@
    id="svg15223"
    version="1.1"
    inkscape:version="0.47pre0 r21549"
-   sodipodi:docname="level3.svg"
+   sodipodi:docname="level4.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs15225">
@@ -1768,9 +1768,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.088388348"
-     inkscape:cx="7533.3966"
-     inkscape:cy="-1517.6944"
+     inkscape:zoom="0.1767767"
+     inkscape:cx="4080.6027"
+     inkscape:cy="786.32682"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      showgrid="false"
@@ -1829,92 +1829,117 @@
      style="display:inline">
     <path
        style="color:#000000;fill:none;stroke:#008000;stroke-width:2;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
-       d="m 1.2500002,908.60999 2879.5521998,-1.72381 164.2761,-64.07916 757.2591,-0.45332 148.2397,63.89207 65.4388,1.33006"
+       d="m -20.49177,787.53072 128.6601,-21.66873 348.0007,28.54257 180.6492,84.22275 945.96547,26.33273 2131.6697,-246.14426 550.1708,-8.61747"
        id="ground"
        inkscape:label="#path16054"
-       sodipodi:nodetypes="cccccc" />
+       sodipodi:nodetypes="ccccccc" />
     <use
-       x="0"
-       y="0"
-       xlink:href="#BambooTree"
-       id="use16077"
-       transform="translate(898,908.99784)"
+       height="1052.36"
        width="6000"
-       height="1052.36" />
+       transform="translate(335.45773,772.99784)"
+       id="use16079"
+       xlink:href="#BambooTree"
+       y="0"
+       x="0" />
     <use
        x="0"
        y="0"
        xlink:href="#BambooTree"
-       id="use16081"
-       transform="translate(1171,910.99784)"
+       id="use12783"
+       transform="translate(607.87913,892.0811)"
        width="6000"
        height="1052.36" />
     <use
        height="1052.36"
        width="6000"
-       transform="translate(3417.8281,837.68597)"
-       id="use8188"
-       xlink:href="#Torii"
-       y="0"
-       x="0"
-       style="display:inline" />
-    <use
-       height="1"
-       width="1"
-       id="use8190"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(1406.7129,899.06055)" />
-    <use
-       height="1"
-       width="1"
-       id="use8192"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(994.7129,907.06055)" />
-    <use
-       height="1"
-       width="1"
-       id="use8194"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(1890.7129,907.06055)" />
-    <use
-       height="1"
-       width="1"
-       id="use8196"
-       xlink:href="#StandingNinja"
-       y="0"
-       x="0"
-       style="display:inline"
-       transform="translate(2074.713,907.06055)" />
-    <use
-       x="0"
-       y="0"
+       transform="translate(950.11873,888.76739)"
+       id="use12781"
        xlink:href="#BambooTree"
-       id="use8214"
-       transform="translate(2411,910.99784)"
-       width="6000"
-       height="1052.36" />
+       y="0"
+       x="0" />
+    <use
+       height="1"
+       width="1"
+       id="use8210"
+       xlink:href="#StandingNinja"
+       y="0"
+       x="0"
+       style="display:inline"
+       transform="translate(2527.1706,787.06055)" />
+    <use
+       transform="translate(3015.1706,731.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5214"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(675.17063,887.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5216"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(387.17063,795.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5218"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(1271.1706,899.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5269"
+       width="1"
+       height="1" />
+    <use
+       transform="translate(1635.1707,887.06055)"
+       style="display:inline"
+       x="0"
+       y="0"
+       xlink:href="#StandingNinja"
+       id="use5271"
+       width="1"
+       height="1" />
     <use
        height="1052.36"
        width="6000"
-       transform="translate(1715,910.99784)"
-       id="use8212"
+       transform="translate(2434.1187,812.76739)"
+       id="use8200"
        xlink:href="#BambooTree"
        y="0"
        x="0" />
     <use
        height="1052.36"
        width="6000"
-       transform="translate(2871,910.99784)"
-       id="use8216"
+       transform="translate(3310.1187,692.76739)"
+       id="use8202"
+       xlink:href="#BambooTree"
+       y="0"
+       x="0" />
+    <use
+       height="1052.36"
+       width="6000"
+       transform="translate(2870.1187,748.76739)"
+       id="use8204"
+       xlink:href="#BambooTree"
+       y="0"
+       x="0" />
+    <use
+       height="1052.36"
+       width="6000"
+       transform="translate(3494.1187,680.76739)"
+       id="use8206"
        xlink:href="#BambooTree"
        y="0"
        x="0" />

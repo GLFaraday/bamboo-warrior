@@ -24,7 +24,7 @@ class BambooWarriorGameState(GameState):
 	It should be possible to replace the gamestate to do something different
 	with input or graphics."""
 
-	def __init__(self, game, levels=['level1.svg', 'level2.svg']):
+	def __init__(self, game, levels=['level1.svg', 'level2.svg', 'level3.svg', 'level4.svg']):
 		self.game = game
 		self.huds = []
 		self.levels = levels[:]
@@ -89,11 +89,18 @@ class BambooWarriorGameState(GameState):
 		if code == key.ESCAPE:
 			self.game.set_gamestate(MenuGameState(self.game, InGameMenu(self.game), child=self))
 			return True
+
+	def game_over(self):
+		from bamboo.menu import MenuGameState, GameOverMenu
+		self.game.set_gamestate(MenuGameState(self.game, GameOverMenu(self.game), child=self))
+
+	def end_game(self):
+		from bamboo.menu import MenuGameState, EndGameMenu
+		self.game.set_gamestate(MenuGameState(self.game, EndGameMenu(self.game), child=self))
 		
 	def on_player_death(self, player):
 		if self.pc.lives == 0:
-			# do game over
-			pass
+			self.game_over()
 		else:
 			pyglet.clock.schedule_once(self.spawn_player, 3)
 
@@ -122,9 +129,11 @@ class BambooWarriorGameState(GameState):
 
 			self.scene.camera.track(self.pc.pos)
 
-			if self.pc.pos.x > self.level.width and self.levels:
-				self.next_level()
-				return
+			if self.pc.pos.x > self.level.width:
+				if self.levels:
+					self.next_level()
+				else:
+					self.end_game()
 
 		self.level.update()
 
