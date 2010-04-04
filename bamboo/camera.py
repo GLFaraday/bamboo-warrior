@@ -13,7 +13,11 @@ class Camera(object):
 
 	@classmethod
 	def for_window(cls, window, *args, **kwargs):
-		return cls(*args, width=window.width, height=window.height, **kwargs)
+		ka = {}
+		ka.update(kwargs)
+		ka['width'] = window.width
+		ka['height'] = window.height
+		return cls(*args, **ka)
 
 
 class FixedCamera(Camera):
