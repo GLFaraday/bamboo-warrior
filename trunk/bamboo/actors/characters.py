@@ -177,7 +177,7 @@ class Character(PhysicalObject):
 			s.opacity *= self.TRAIL_DECAY
 		
 		# copy sprite
-		s = pyglet.sprite.Sprite(self.sprite.image, *self.sprite.position, batch=self.trail_batch)
+		s = pyglet.sprite.Sprite(self.sprite.image, self.sprite.x, self.sprite.y, batch=self.trail_batch)
 		s.rotation = self.sprite.rotation
 		s.opacity = 128
 		
