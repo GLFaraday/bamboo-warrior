@@ -39,9 +39,9 @@ class Game(object):
 			height = 720
 		
 		if options.fullscreen:
-			window = pyglet.window.Window(fullscreen=True, vsync=False)
+			window = pyglet.window.Window(fullscreen=True)
 		else:
-			window = pyglet.window.Window(width, height, vsync=False)
+			window = pyglet.window.Window(width, height)
 		window.set_caption('Bamboo Warrior')
 		return window
 
