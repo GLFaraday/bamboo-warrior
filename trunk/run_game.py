@@ -12,8 +12,18 @@ parser.add_option('-d', '--resolution', help='Screen or window resolution (WxH)'
 parser.add_option('-p', '--profiler', action='store_true', help='Run with profiler; print stats on exit', default=False)
 parser.add_option('-r', '--showfps', action='store_true', help='Show framerate display', default=False)
 parser.add_option('-l', '--level', action='store', help='Start a named level')
+parser.add_option('-n', '--novbo', action='store_true', help='Disable the use of VBOs (buggy/slow on some drivers)', default=False)
 
 options, arguments = parser.parse_args()
+
+if options.novbo:
+	# monkey-patch pyglet
+	from pyglet.graphics import vertexdomain
+	default_create_attribute_usage = vertexdomain.create_attribute_usage
+	def create_attribute_usage(format):
+		attribute, usage, vbo = default_create_attribute_usage(format)
+		return attribute, usage, False
+	vertexdomain.create_attribute_usage = create_attribute_usage
 
 from bamboo.game import Game
 
@@ -30,6 +40,9 @@ else:
 
 if options.profiler:
 	import cProfile
-	cProfile.run('game.run()')
+	cProfile.run('game.run()', 'profiler-stats.dat')
+	import pstats
+	p = pstats.Stats('profiler-stats.dat')
+	p.sort_stats('time').print_stats()
 else:
 	game.run()
