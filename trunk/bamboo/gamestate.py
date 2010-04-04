@@ -3,6 +3,8 @@ import pyglet
 from bamboo.geom import Vec2
 from pyglet.window import key
 
+from bamboo.keybindings import load_bindings
+
 
 class GameState(object):
 	def start(self):
@@ -29,6 +31,7 @@ class BambooWarriorGameState(GameState):
 		self.huds = []
 		self.levels = levels[:]
 		self.start_level(self.levels.pop(0))
+		self.keybindings = load_bindings()
 
 	def get_camera(self):
 		from bamboo import camera
@@ -111,20 +114,21 @@ class BambooWarriorGameState(GameState):
 
 	def update(self, keys):
 		player = self.player
-
+		p1bindings = self.keybindings['player1']
+	
 		if self.pc.is_alive():
-			if keys[key.RSHIFT]:
+			if p1bindings.is_jump(keys):
 				player.jump()
-			elif keys[key.RCTRL]:
+			elif p1bindings.is_attack(keys):
 				player.attack()
 
-			if keys[key.UP]:
+			if p1bindings.is_up(keys):
 				player.up()
-			elif keys[key.DOWN]:
+			elif p1bindings.is_down(keys):
 				player.down()
-			elif keys[key.RIGHT]:
+			elif p1bindings.is_right(keys):
 				player.right()
-			elif keys[key.LEFT]:
+			elif p1bindings.is_left(keys):
 				player.left()
 
 			self.scene.camera.track(self.pc.pos)
@@ -198,36 +202,39 @@ class MultiplayerGameState(BambooWarriorGameState):
 	def update(self, keys):
 		player1 = self.player1
 		player2 = self.player2
+		p1bindings = self.keybindings['player1']
+		p2bindings = self.keybindings['player2']
+		
 		if self.pc1.is_alive():
-			if keys[key.RSHIFT]:
+			if p1bindings.is_jump(keys):
 				player1.jump()
-			elif keys[key.RCTRL]:
+			elif p1bindings.is_attack(keys):
 				player1.attack()
 
-			if keys[key.UP]:
+			if p1bindings.is_up(keys):
 				player1.up()
-			elif keys[key.DOWN]:
+			elif p1bindings.is_down(keys):
 				player1.down()
-			elif keys[key.RIGHT]:
+			elif p1bindings.is_right(keys):
 				player1.right()
-			elif keys[key.LEFT]:
+			elif p1bindings.is_left(keys):
 				player1.left()
 		else:
 			self.spawn_p1()
 
 		if self.pc2.is_alive():
-			if keys[key.U]:
+			if p2bindings.is_jump(keys):
 				player2.jump()
-			elif keys[key.I]:
+			elif p2bindings.is_attack(keys):
 				player2.attack()
 
-			if keys[key.W]:
+			if p2bindings.is_up(keys):
 				player2.up()
-			elif keys[key.S]:
+			elif p2bindings.is_down(keys):
 				player2.down()
-			elif keys[key.D]:
+			elif p2bindings.is_right(keys):
 				player2.right()
-			elif keys[key.A]:
+			elif p2bindings.is_left(keys):
 				player2.left()
 		else:
 			self.spawn_p2()

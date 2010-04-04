@@ -8,6 +8,7 @@ from pyglet import gl
 from bamboo.gamestate import GameState, BambooWarriorGameState
 from bamboo.menu import MenuGameState
 
+
 class Game(object):
 	def __init__(self, options):
 		"""Here options is an optparse object or similar that contains a few
