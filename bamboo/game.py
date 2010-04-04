@@ -8,6 +8,7 @@ from pyglet import gl
 from bamboo.gamestate import GameState, BambooWarriorGameState
 from bamboo.menu import MenuGameState
 
+FPS = 30.0
 
 class Game(object):
 	def __init__(self, options):
@@ -83,6 +84,6 @@ class Game(object):
 			self.fps.draw()
 	
 	def run(self):
-		pyglet.clock.schedule_interval(self.update, (1.0/32.0))
-		pyglet.clock.set_fps_limit(32.0)
+		pyglet.clock.schedule_interval(self.update, (1.0/FPS))
+		pyglet.clock.set_fps_limit(FPS)
 		pyglet.app.run()

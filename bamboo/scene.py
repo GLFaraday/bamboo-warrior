@@ -37,7 +37,7 @@ class InfiniteDistanceBackground(object):
 	
 	def create_batch(self, window):
 		self.batch = pyglet.graphics.Batch()
-		self.group = pyglet.sprite.SpriteGroup(self.texture, gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+		self.group = pyglet.sprite.SpriteGroup(self.texture, gl.GL_ONE, gl.GL_ZERO)
 		self.vertexlist = self.batch.add(4, gl.GL_QUADS, self.group,
 			('v2i/static', [0,0, window.width,0, window.width,window.height, 0,window.height]),
 			('t3f/static', self.texture.tex_coords),
@@ -118,9 +118,20 @@ class Scene(object):
 		pyglet.graphics.draw(len(vs) // 2, gl.GL_QUADS, ('v2f', vs))
 		gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_FILL)
 
+	def draw_trees(self):
+		self.trees_batch.draw()	
+	
+	def draw_sprites(self):
+		self.batch.draw()	
+
+	def draw_terrain(self):
+		self.level.ground.draw()
+
 	def draw(self):
 		viewport = self.camera.get_viewport()
 
+		# this is good for a night mode
+		#gl.glClear(gl.GL_COLOR_BUFFER_BIT)
 		# draw infinite background
 		self.background.draw()
 
@@ -132,9 +143,9 @@ class Scene(object):
 		self.background2.draw(viewport)
 
 		# TODO: compute PVS
-		self.trees_batch.draw()	
-		self.batch.draw()	
-		self.level.ground.draw()
+		self.draw_trees()
+		self.draw_sprites()
+		self.draw_terrain()
 
 		# for testing
 		#self.draw_bboxes()

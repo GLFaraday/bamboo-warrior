@@ -3,7 +3,6 @@ import pyglet
 from bamboo.resources import ResourceTracker
 from bamboo.geom import Vec2
 
-
 class Actor(ResourceTracker):
 	initial_animation = None
 	current = None
