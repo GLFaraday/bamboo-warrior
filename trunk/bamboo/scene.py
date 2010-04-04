@@ -21,13 +21,13 @@ class Viewport(object):
 		return Rect(l, b, self.width * self.scale, self.height * self.scale)
 
 	def apply_transform(self):
-		gl.glPushMatrix(gl.GL_MODELVIEW)
+		gl.glPushMatrix()
 		bounds  = self.bounds()
 		gl.glScalef(1.0 / self.scale, 1.0 / self.scale, 1)
 		gl.glTranslatef(-bounds.l, -bounds.b, 0)
 
 	def reset_transform(self):
-		gl.glPopMatrix(gl.GL_MODELVIEW)
+		gl.glPopMatrix()
 
 
 class InfiniteDistanceBackground(object):
@@ -78,10 +78,10 @@ class NearBackground(object):
 		wfrac = bs.l / float(self.level_w - bs.w)
 		dx = (self.w - self.level_w) * (wfrac - 0.5)
 
-		gl.glPushMatrix(gl.GL_MODELVIEW)
+		gl.glPushMatrix()
 		gl.glTranslatef(dx, 0, 0)
 		self.batch.draw()
-		gl.glPopMatrix(gl.GL_MODELVIEW)
+		gl.glPopMatrix()
 
 
 class Scene(object):

@@ -78,10 +78,10 @@ class HUD(ResourceTracker):
 
 	def draw(self):
 		if self.side == 'r':
-			glPushMatrix(GL_MODELVIEW)
+			glPushMatrix()
 			glTranslatef(self.window.width, 0, 0)
 			glScalef(-1,1,1)
 			self.batch.draw()
-			glPopMatrix(GL_MODELVIEW)
+			glPopMatrix()
 		else:
 			self.batch.draw()
