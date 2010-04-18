@@ -3,7 +3,7 @@ from xml.etree import ElementTree
 
 import pyglet
 
-from bamboo.geom import Vec2
+from bamboo.geom import Vec2, Polygon, Plane
 from bamboo.level import Level, ActorSpawn
 from bamboo.terrain import Terrain
 
@@ -61,22 +61,38 @@ class SVGLevelLoader(object):
 	def load_path(self, path):
 		"""Read coordinates from path"""
 		p = PathLoader(path.get('d'))
-		return [Vec2(v.x, self.height - v.y) for v in p.coordinates()]
+		polygon = p.parse()
+		return polygon.mirror(Plane(Vec2(0, 1), self.height * 0.5))
 
 
 class PathLoader(object):
-	"""Loads an SVG path as a sequence of Vec2s"""
+	"""Loads an SVG path as a bamboo.geom.Polygon"""
 
 	def __init__(self, s):
 		self.s = s
+		self.contour = []
+		self.polygon = Polygon()
 
 	def tokens(self):
 		return re.split(r'[, ]', self.s)
 
-	def coordinates(self):
+	def start_contour(self):
+		self.contour = []
+
+	def end_contour(self):
+		if self.contour:
+			self.polygon.add_contour(self.contour)
+		self.contour = []
+
+	def add_vertex(self, v):
+		self.contour.append(v)
+
+	def parse(self):
+		self.start_contour()
 		self.closed = False # until proven guilty
 		state = None
 		pos = Vec2(0, 0)
+
 		x = None # hold x coordinate while we wait for the y
 		for tok in self.tokens():
 			# read until we have a coordinate pair
@@ -85,22 +101,26 @@ class PathLoader(object):
 			except ValueError:
 				if tok in 'Zz':
 					self.closed = True
+					self.end_contour()
+				# M/m actually means move with pen up, which
+				# would end the contour too, except that we need
+				# closed contours
 				state = tok
 				continue
 
 			if x is None:
 				if state == 'v':
 					pos += Vec2(0, v)
-					yield pos
+					self.add_vertex(pos)
 				elif state == 'V':
 					pos = Vec2(pos.x, v)
-					yield pos
+					self.add_vertex(pos)
 				elif state == 'h':
 					pos += Vec2(v, 0)
-					yield pos
+					self.add_vertex(pos)
 				elif state == 'H':
 					pos = Vec2(v, pos.y)
-					yield pos
+					self.add_vertex(pos)
 				else:
 					x = v
 				continue
@@ -111,9 +131,11 @@ class PathLoader(object):
 
 			if state in 'lm':
 				pos += v
-				yield pos
+				self.add_vertex(pos)
 			elif state in 'LM':
 				pos = v
-				yield pos
+				self.add_vertex(pos)
 			else:
 				raise LevelParseError("Coordinate pair in state %s is unsupported." % state)
+		self.end_contour()
+		return self.polygon

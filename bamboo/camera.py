@@ -41,6 +41,10 @@ class MovingCamera(FixedCamera):
 	def update(self):
 		"""Implement this to reposition the camera, etc."""
 
+	def track(self, pos):
+		"""Implement this to set where the camera should be looking"""
+		self.move_to(pos)
+
 	def get_viewport(self):
 		self.update()
 		return super(MovingCamera, self).get_viewport()
