@@ -5,6 +5,7 @@ from pyglet import gl
 
 from bamboo.resources import ResourceTracker
 from bamboo.geom import Rect
+from bamboo.renderers.terrainrenderer import *
 
 
 class Viewport(object):
@@ -94,6 +95,9 @@ class Scene(object):
 		self.background = InfiniteDistanceBackground('distant-background.png', window)
 		self.background2 = NearBackground('bamboo-forest.png', level, depth=0.15)
 		self.background3 = NearBackground('bamboo-forest.png', level, depth=0.4, y=-150)
+
+		self.terrain_renderer = TerrainRenderer(level.ground) 
+		self.terrain_renderer.create_batch()
 		self.trees_batch = pyglet.graphics.Batch()
 		self.batch = pyglet.graphics.Batch()
 
@@ -108,6 +112,8 @@ class Scene(object):
 					ts += 1
 			else:
 				a.update_batch(self.batch)
+
+		self.terrain_renderer.update()
 
 	def draw_bboxes(self):
 		gl.glPolygonMode(gl.GL_FRONT_AND_BACK, gl.GL_LINE)
@@ -125,7 +131,7 @@ class Scene(object):
 		self.batch.draw()	
 
 	def draw_terrain(self):
-		self.level.ground.draw()
+		self.terrain_renderer.draw()
 
 	def draw(self):
 		viewport = self.camera.get_viewport()

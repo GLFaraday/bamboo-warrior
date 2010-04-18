@@ -5983,16 +5983,6 @@
          offset="1"
          id="stop4162-0-4" />
     </linearGradient>
-    <linearGradient
-       y2="2303.3774"
-       x2="63"
-       y1="2204.4243"
-       x1="63"
-       gradientTransform="matrix(0.13209494,0,0,1.2190477,-545.27882,27.790703)"
-       gradientUnits="userSpaceOnUse"
-       id="linearGradient6767"
-       xlink:href="#linearGradient6830"
-       inkscape:collect="always" />
     <inkscape:perspective
        id="perspective6796"
        inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
@@ -6527,6 +6517,32 @@
        id="linearGradient14641"
        xlink:href="#linearGradient13801-7"
        inkscape:collect="always" />
+    <filter
+       id="filter5843"
+       inkscape:label="Earth Pattern"
+       x="0"
+       y="0"
+       height="1"
+       width="1">
+      <feTurbulence
+         id="feTurbulence5845"
+         baseFrequency="0.069565217391304349"
+         numOctaves="3" />
+      <feDiffuseLighting
+         id="feDiffuseLighting5851"
+         result="result1">
+        <feDistantLight
+           id="feDistantLight5853"
+           azimuth="225"
+           elevation="45" />
+      </feDiffuseLighting>
+      <feBlend
+         blend="normal"
+         id="feBlend5857"
+         in2="result1"
+         in="SourceGraphic"
+         mode="multiply" />
+    </filter>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -6536,10 +6552,10 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="135.79714"
-     inkscape:cy="-1207.1559"
+     inkscape:cx="45.563552"
+     inkscape:cy="-1604.9474"
      inkscape:document-units="px"
-     inkscape:current-layer="layer3"
+     inkscape:current-layer="layer4"
      showgrid="false"
      inkscape:snap-global="false"
      inkscape:window-width="1680"
@@ -14236,13 +14252,13 @@
          style="display:inline" />
     </g>
     <rect
-       style="color:#000000;fill:url(#linearGradient6767);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+       style="color:#000000;fill:#895f43;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;filter:url(#filter5843)"
        id="rect13582-0"
        width="128"
        height="128"
        x="-568.52753"
        y="2707.699"
-       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/textures/earth-gradient.png"
+       inkscape:export-filename="/home/mauve/dev/bamboo-warrior/resources/textures/earth-colour.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
     <g
